@@ -20,6 +20,10 @@ var DMC;
                     this.colour = opts.colour;
                 }
             }
+            Node.prototype.isRoot = function () {
+                return this.parentId === null;
+            };
+
             Node.prototype.toString = function () {
                 return 'id: ' + this.id + ',' + 'parentId: ' + this.parentId + ',' + 'title: ' + this.title;
             };

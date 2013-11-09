@@ -1,5 +1,8 @@
 ﻿/* TreeBurst.less */
 /* Colour vars */
+.greyBorder {
+  border: 1px solid #ccc;
+}
 /* Mixins*/
 body {
   background-color: #111111;
@@ -14,9 +17,15 @@ h1 {
   padding: 1em;
 }
 .tbContainer {
-  position: absolute;
+  position: relative;
   width: 90%;
   height: 85%;
   margin: 0 5%;
   border: 1px solid #ccc;
+}
+canvas {
+  position: relative;
+  background-color: #222222;
+  border-left: 1px solid #cccccc;
+  border-right: 1px solid #cccccc;
 }

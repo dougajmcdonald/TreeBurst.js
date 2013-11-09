@@ -15,10 +15,28 @@ var DMC;
                     console.log("Error: No nodes passed to application.");
                 }
 
-                this.tree.Draw();
+                this.setupCanvas(opts.canvasEl, opts.width, opts.height);
+
+                this.treeCanvas = new TreeBurst.TreeCanvas({
+                    treeManager: this.treeManager,
+                    canvas: opts.canvasEl,
+                    radius: opts.radius
+                });
             }
+            // setup the canvas for use
+            Application.prototype.setupCanvas = function (canvas, width, height) {
+                // size it up
+                canvas.width = width;
+                canvas.height = height;
+
+                // centre it horizontally
+                var pw = $(canvas).parent().width();
+                canvas.style.left = (pw - canvas.width) / 2 + "px";
+            };
+
+            // load the nodes we recieved into the nodetree
             Application.prototype.LoadNodes = function (nodes) {
-                this.tree = new TreeBurst.NodeTree({
+                this.treeManager = new TreeBurst.TreeManager({
                     $: this.$,
                     nodes: nodes
                 });

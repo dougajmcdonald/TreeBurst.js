@@ -37,6 +37,10 @@ module DMC.TreeBurst {
             }
         }
 
+        public isRoot(): boolean {
+            return this.parentId === null;
+        }
+
         public toString(): string {
             return 'id: ' + this.id + ',' +
                 'parentId: ' + this.parentId + ',' +

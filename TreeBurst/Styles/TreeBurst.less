@@ -2,6 +2,11 @@
 
 /* Colour vars */
 @bg: #111;
+@canvasbg: #222;
+@grey: #ccc;
+.greyBorder {
+    border: 1px solid #ccc;
+}
 
 /* Mixins*/
 
@@ -20,9 +25,16 @@ h1 {
 }
 
 .tbContainer {
-    position: absolute;
+    position: relative;
     width: 90%;
     height: 85%;
     margin: 0 5%;
-    border: 1px solid #ccc;
+    .greyBorder;
+}
+
+canvas {
+    position: relative;
+    background-color: @canvasbg;
+    border-left: 1px solid @grey;
+    border-right: 1px solid @grey;
 }
