@@ -1,0 +1,33 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>TreeBurst 0.1</title>    
+    <!-- Lib includes -->
+    <link href="Styles/css/CssReset.css" type="text/css" rel="stylesheet" />    
+    <script src="Scripts/lib/modernizr-2.6.2.js"></script>
+    <script src="Scripts/lib/jquery-2.0.3.js"></script>
+    <!-- TreeBurst -->
+    <link href="Styles/css/TreeBurst.min.css" type="text/css" rel="stylesheet" />
+    <script src="Scripts/app/DMC.TreeBurst.Application.js"></script>
+    <script src="Scripts/app/DMC.TreeBurst.NodeTree.js"></script>
+    <script src="Scripts/app/DMC.TreeBurst.Node.js"></script>
+    <script src="Scripts/app/Data/DemoNodes.js"></script>
+</head>
+<body>
+    <h1>TreeBurst.js</h1>
+    <div class="tbContainer">
+        <canvas id="tbCanvas"></canvas>
+    </div>
+</body>
+    <script>
+        $(document).ready(function () {
+
+            this.demoNodes = new DMC.TreeBurst.Data.DemoNodes();
+
+            this.treeBurst = new DMC.TreeBurst.Application(jQuery, {
+                name: "Doug",
+                nodes: this.demoNodes.GetNodes()
+            });
+        });
+    </script>
+</html>
