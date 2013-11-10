@@ -37,3 +37,31 @@ A Node is defined like this:
 	}
 
 An array of nodes should be provided to draw a TreeBurst.
+
+One and only one root node must be provided.
+
+All nodes except the root node must have a parentId provided.
+
+Future
+============
+
+There are several major developments planned for TreeView.js, these are outlined below:
+
+Phase 1:
+- Titles displayed in nodes
+- Mouseover/tooltips displayed on nodes
+- Colour palletes offered, instead of random colours
+
+Phase 2:
+- Ability to rotate the TreeBurst
+- Clicked nodes can optionally 'explode' out of the TreeBurst
+- Ability to rotate and interact with the TreeBurst via Leap Motion (I need to excuse to start playing with it!)
+
+Phase 3:
+- 3D TreeBurst (I need to excuse to play with WebGL)
+- Ability to rotate and interact with the 3D TreeBurst via Leap Motion
+
+
+Feedback
+============
+Any thoughts, comments, critisisms, bugs or contributions are very welcome.
