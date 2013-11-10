@@ -21,11 +21,6 @@ var DMC;
                             title: "child 2"
                         }),
                         new TreeBurst.Node({
-                            id: 4,
-                            parentId: 1,
-                            title: "child 3"
-                        }),
-                        new TreeBurst.Node({
                             id: 5,
                             parentId: 2,
                             title: "grand child 1"
@@ -57,8 +52,13 @@ var DMC;
                         }),
                         new TreeBurst.Node({
                             id: 11,
-                            parentId: 7,
+                            parentId: 6,
                             title: "grand grand child 4"
+                        }),
+                        new TreeBurst.Node({
+                            id: 12,
+                            parentId: 6,
+                            title: "grand grand child 5"
                         })
                     ];
                 }

@@ -50,32 +50,20 @@ module DMC.TreeBurst {
 
         public drawTree(): void {
 
-            // sort the nodes by depth
+            // sort the nodes by depth, we want to draw from the outside in as we overwrite portions of the outer circle with the inner
+            // circles until we reach the root
             var sortedNodes = this.nodes.sort((a: CanvasNode, b: CanvasNode) => {
-
                 return a.getDepth() - b.getDepth();
-
-                //var aDepth = a.getDepth();
-                //var bDepth = b.getDepth();
-                //var aId = a.getId();
-                //var bId = b.getId();
-                
-                //return (aDepth < bDepth) ? -1 : (aDepth > bDepth) ? 1 : ((aId > bId) ? -1 : (aId < bId) ? 1 : 0);
-
             });
                 
             var currentNode = sortedNodes.pop();
 
             while (currentNode) {
-
-                console.log("Drawing:");
-                console.log(currentNode);
             
                 this.context2d.fillStyle = currentNode.colour;
                 this.context2d.beginPath();
                 this.context2d.moveTo(this.xOrigin, this.yOrigin);
                 this.context2d.arc(this.xOrigin, this.yOrigin, currentNode.radius, currentNode.startRadian, currentNode.endRadian);
-                console.log("arc(" + this.xOrigin + "," + this.yOrigin + "," + currentNode.radius + "," + currentNode.startRadian + "," + currentNode.endRadian + ")");
                 this.context2d.fill();
                 this.context2d.closePath();
 
@@ -105,8 +93,12 @@ module DMC.TreeBurst {
         }
 
         private createCanvasChildren(parentNode: CanvasNode): void {
-            // draw children
+
+            // get children
             var children = this.treeManager.getChildren(parentNode);
+
+            // notch is the radian angle needed for each child
+            var notch: number = (parentNode.endRadian - parentNode.startRadian) / children.length;
 
             children.forEach((child: Node, index: number) => {
 
@@ -116,18 +108,12 @@ module DMC.TreeBurst {
                 if (!canvasNode.colour) {
                     canvasNode.colour = this.getRandomColour();
                 }
+                // set radius and start/end angles
+                canvasNode.radius = (canvasNode.getDepth() + 1) * this.radius;     
+                canvasNode.startRadian = parentNode.startRadian + (notch * index);
+                canvasNode.endRadian = parentNode.startRadian + (notch * (index + 1));                
 
-                canvasNode.radius = (canvasNode.getDepth() + 1) * this.radius;                
-
-                canvasNode.startRadian = parentNode.startRadian + ((parentNode.endRadian / children.length) * index);
-                console.log("pStart:" + parentNode.startRadian);
-                console.log("cStart: " + canvasNode.startRadian);
-
-
-                canvasNode.endRadian = parentNode.startRadian + ((parentNode.endRadian / children.length) * (index + 1));;                
-                console.log("pEnd:" + parentNode.endRadian);
-                console.log("cEnd: " + canvasNode.endRadian);               
-
+                // push the child onto the canvas tree and create its children
                 this.nodes.push(canvasNode);
                 this.createCanvasChildren(canvasNode);
 

@@ -3,12 +3,9 @@ module DMC.TreeBurst {
 
     export interface CanvasNodeOptions extends NodeOptions {
 
-        //colour: string;
-        //startRadian: number;
-        //endRadian: number;
-        //radius: number;
     }
 
+    // canvas nodes stores the info we need from each node to draw it to canvas
     export class CanvasNode extends Node {
 
         public startRadian: number;
@@ -18,11 +15,7 @@ module DMC.TreeBurst {
         constructor(opts: CanvasNodeOptions) {
 
             super(opts);
-            //this.color = opts.colour;
-            //this.startRadian = opts.startRadian;
-            //this.endRadian = opts.endRadian;
-            //this.radius = opts.radius;
-            
+                        
         }
     }
 }

@@ -25,11 +25,11 @@ module DMC.TreeBurst.Data {
                     parentId: 1,
                     title: "child 2"
                 }),
-                new Node({
-                    id: 4,
-                    parentId: 1,
-                    title: "child 3"
-                }),
+                //new Node({
+                //    id: 4,
+                //    parentId: 1,
+                //    title: "child 3"
+                //}),
                 // level 2
                 new Node({
                     id: 5,
@@ -64,8 +64,13 @@ module DMC.TreeBurst.Data {
                 }),
                 new Node({
                     id: 11,
-                    parentId: 7,
+                    parentId: 6,
                     title: "grand grand child 4"
+                }),
+                new Node({
+                    id: 12,
+                    parentId: 6,
+                    title: "grand grand child 5"
                 })
             ];
 
