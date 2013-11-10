@@ -69,6 +69,7 @@
     <TypeScriptCompile Include="Scripts\app\Data\DemoNodes.ts" />
     <TypeScriptCompile Include="Scripts\app\DMC.TreeBurst.TreeCanvas.ts" />
     <TypeScriptCompile Include="Scripts\app\DMC.TreeBurst.CanvasNode.ts" />
+    <Content Include="Scripts\app\Data\DemoNodes.js" />
     <Content Include="Scripts\app\DMC.TreeBurst.Application.js" />
     <Content Include="Scripts\app\DMC.TreeBurst.CanvasNode.js" />
     <Content Include="Scripts\app\DMC.TreeBurst.Node.js" />
