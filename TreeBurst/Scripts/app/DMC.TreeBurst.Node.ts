@@ -18,8 +18,10 @@ module DMC.TreeBurst {
         private id: number;
         private parentId: number = null;
         private title: string;
-        private content: string = null;
-        private colour: string = null;
+        private content: string = null;        
+        private depth: number = null;
+
+        public colour: string = null;
 
         constructor(opts: NodeOptions) {
 
@@ -37,13 +39,30 @@ module DMC.TreeBurst {
             }
         }
 
+        public setDepth(depth: number): void {
+            this.depth = depth;
+        }
+
+        public getDepth(): number {
+            return this.depth;
+        }
+
+        public getParentId(): number {
+            return this.parentId;
+        }
+
+        public getId(): number {
+            return this.id;
+        }
+
         public isRoot(): boolean {
             return this.parentId === null;
         }
 
         public toString(): string {
-            return 'id: ' + this.id + ',' +
-                'parentId: ' + this.parentId + ',' +
+            return 'id: ' + this.id + ', ' +
+                'parentId: ' + this.parentId + ', ' +
+                'depth: ' + this.depth + ', ' +
                 'title: ' + this.title;
         }
 

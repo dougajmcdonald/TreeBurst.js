@@ -6,6 +6,7 @@ var DMC;
             function Node(opts) {
                 this.parentId = null;
                 this.content = null;
+                this.depth = null;
                 this.colour = null;
                 this.id = opts.id;
                 this.title = opts.title;
@@ -20,12 +21,28 @@ var DMC;
                     this.colour = opts.colour;
                 }
             }
+            Node.prototype.setDepth = function (depth) {
+                this.depth = depth;
+            };
+
+            Node.prototype.getDepth = function () {
+                return this.depth;
+            };
+
+            Node.prototype.getParentId = function () {
+                return this.parentId;
+            };
+
+            Node.prototype.getId = function () {
+                return this.id;
+            };
+
             Node.prototype.isRoot = function () {
                 return this.parentId === null;
             };
 
             Node.prototype.toString = function () {
-                return 'id: ' + this.id + ',' + 'parentId: ' + this.parentId + ',' + 'title: ' + this.title;
+                return 'id: ' + this.id + ', ' + 'parentId: ' + this.parentId + ', ' + 'depth: ' + this.depth + ', ' + 'title: ' + this.title;
             };
             return Node;
         })();

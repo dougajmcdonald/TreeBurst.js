@@ -9,6 +9,7 @@ module DMC.TreeBurst {
     export class TreeManager {
 
         private $: JQueryStatic;
+        private root: Node;
         private nodes: Node[];
 
         constructor(opts: TreeManagerOptions) {
@@ -16,6 +17,19 @@ module DMC.TreeBurst {
             this.nodes = opts.nodes;
 
             // TODO: Construct a node tree from the nodes
+            this.parseNodes();
+        }
+
+        // parse all nodes in the tree, setting their tier
+        private parseNodes() : void {
+
+            // set the root
+            var depth = 0;
+            this.root = this.getRootNode();
+            this.root.setDepth(depth);
+
+            // then recursively set tiers on all children
+            this.parseChildren(this.root, depth);
 
         }
 
@@ -32,7 +46,7 @@ module DMC.TreeBurst {
                     root = node;
                 }
             });
-
+            //TODO: capture duel roots
             if (!root) {
                 console.log("Error: No root node defined within nodes");
             }
@@ -40,22 +54,43 @@ module DMC.TreeBurst {
             return root;
         }
 
-        public draw(): void {
+        public parseChildren(node: Node, depth: number): void {
 
-            // draw the root
-            //var root = this.getRootNode();
+            node.setDepth(depth);
+
+            var kids = this.getChildren(node);
+
+            if (kids.length > 0) {
+
+                depth++;
+
+                for (var i: number = 0; i < kids.length; i++) {                    
+                    this.parseChildren(kids[i], depth);
+                }
+            }
+        }
+
+        public getChildren(parentNode: Node): Node[] {
+            // todo: should we store children in a node? 
+            // seems heavy to go through them all each time we need a child
+            return this.nodes.filter((value: Node, index: number) => {
+                return value.getParentId() === parentNode.getId();
+            });
+        }
 
 
-            // draw the tier x nodes
-            // get nodes with x parents
-            //$.each(this.nodes, (index: number, node: Node) => {
 
-            //    node
+        public printNodesToConsole(nodes: Node[]): void {
+            $.each(nodes, (index: number, node: Node) => {
+                console.log(node.toString());
+            });                        
+        }
 
-            //    console.log(node.toString());
 
-            //});
-                        
+        public printTreeToConsole(): void {
+            $.each(this.nodes, (index: number, node: Node) => {
+                console.log(node.toString());
+            });
         }
     }
 }

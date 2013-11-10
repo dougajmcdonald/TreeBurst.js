@@ -68,6 +68,7 @@
     <TypeScriptCompile Include="Scripts\app\DMC.TreeBurst.TreeManager.ts" />
     <TypeScriptCompile Include="Scripts\app\Data\DemoNodes.ts" />
     <TypeScriptCompile Include="Scripts\app\DMC.TreeBurst.TreeCanvas.ts" />
+    <TypeScriptCompile Include="Scripts\app\DMC.TreeBurst.CanvasNode.ts" />
     <Content Include="Scripts\lib\jquery-2.0.3.js" />
     <Content Include="Scripts\lib\jquery-2.0.3.min.js" />
     <Content Include="Scripts\typings\jquery\jquery.d.ts" />
