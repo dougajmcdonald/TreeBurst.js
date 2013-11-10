@@ -17,23 +17,41 @@
 </head>
 <body>
     <h1>TreeBurst.js</h1>
+    <select id="treeDataSelector">
+        <option value="1">Single root</option>
+        <option value="2">Depth 1 - Root with two children</option>
+        <option value="3">Depth 2 - Root with grandchildren, balanced</option>
+        <option value="4">Depth 3 - Root with grandchildren, unbalanced</option>
+        <option value="5">Depth 4 - Complex unbalanced tree</option>
+    </select>
     <div class="tbContainer">
         <canvas id="tbCanvas" width="500" height="500"></canvas>
     </div>
 </body>
     <script>
-        $(document).ready(function () {
+        $(document).ready(function () {            
 
-            this.demoNodes = new DMC.TreeBurst.Data.DemoNodes();
+            function init(nodeSet) {
 
-            this.treeBurst = new DMC.TreeBurst.Application(jQuery, {
-                name: "Doug",
-                nodes: this.demoNodes.GetNodes(),
-                canvasEl: document.getElementById('tbCanvas'),
-                width: 800,
-                height: 600,
-                radius: 50
+                this.demoNodes = new DMC.TreeBurst.Data.DemoNodes(nodeSet);
+
+                this.treeBurst = new DMC.TreeBurst.Application(jQuery, {
+                    name: "Doug",
+                    nodes: this.demoNodes.getNodes(),
+                    canvasEl: document.getElementById('tbCanvas'),
+                    width: 800,
+                    height: 600,
+                    radius: 50
+                });
+            }
+
+            $('#treeDataSelector').on('change', function () {
+
+                init(parseInt(this.value, 10));
+
             });
+
+            init(1);
         });
     </script>
 </html>

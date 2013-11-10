@@ -78,14 +78,11 @@ module DMC.TreeBurst {
             });
         }
 
-
-
         public printNodesToConsole(nodes: Node[]): void {
             $.each(nodes, (index: number, node: Node) => {
                 console.log(node.toString());
             });                        
         }
-
 
         public printTreeToConsole(): void {
             $.each(this.nodes, (index: number, node: Node) => {

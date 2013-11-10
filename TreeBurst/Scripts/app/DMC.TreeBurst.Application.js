@@ -10,11 +10,11 @@ var DMC;
                 console.log("Welcome to TreeBurst: " + opts.name);
 
                 if (opts.nodes) {
-                    this.LoadNodes(opts.nodes);
+                    this.loadNodes(opts.nodes);
                 } else {
                     console.log("Error: No nodes passed to application.");
                 }
-
+                this.canvasEl = opts.canvasEl;
                 this.setupCanvas(opts.canvasEl, opts.width, opts.height);
 
                 this.treeCanvas = new TreeBurst.TreeCanvas({
@@ -34,8 +34,13 @@ var DMC;
                 canvas.style.left = (pw - canvas.width) / 2 + "px";
             };
 
+            Application.prototype.clearCanvas = function () {
+                this.canvasEl.width = 0;
+                this.canvasEl.height = 0;
+            };
+
             // load the nodes we recieved into the nodetree
-            Application.prototype.LoadNodes = function (nodes) {
+            Application.prototype.loadNodes = function (nodes) {
                 this.treeManager = new TreeBurst.TreeManager({
                     $: this.$,
                     nodes: nodes

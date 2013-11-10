@@ -76,9 +76,7 @@ module DMC.TreeBurst {
 
             // get root
             var root: Node = this.treeManager.getRootNode();
-
             var canvasNode = <CanvasNode>root;
-            console.log(canvasNode);
 
             if (!canvasNode.colour) {
                 canvasNode.colour = this.getRandomColour();

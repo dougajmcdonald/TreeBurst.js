@@ -16,6 +16,10 @@ h1 {
   font-weight: normal;
   padding: 1em;
 }
+#treeDataSelector {
+  font-weight: normal;
+  margin: 0 0 2em 3em;
+}
 .tbContainer {
   position: relative;
   width: 90%;

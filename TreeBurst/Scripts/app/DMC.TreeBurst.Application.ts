@@ -18,17 +18,18 @@ module DMC.TreeBurst {
         private $: JQueryStatic;
         private treeManager: TreeManager;
         private treeCanvas: TreeCanvas;
+        private canvasEl: HTMLCanvasElement;
 
         constructor($: JQueryStatic, opts: TreeBurstOptions) {
 
             console.log("Welcome to TreeBurst: " + opts.name);
 
             if (opts.nodes) {
-                this.LoadNodes(opts.nodes);
+                this.loadNodes(opts.nodes);
             } else {
                 console.log("Error: No nodes passed to application.")
             }
-
+            this.canvasEl = opts.canvasEl;
             this.setupCanvas(opts.canvasEl, opts.width, opts.height);
 
             this.treeCanvas = new TreeCanvas({
@@ -51,8 +52,15 @@ module DMC.TreeBurst {
             canvas.style.left = (pw - canvas.width) / 2 + "px";
         }
 
+        public clearCanvas(): void {
+
+            this.canvasEl.width = 0;
+            this.canvasEl.height = 0;
+
+        }
+
         // load the nodes we recieved into the nodetree
-        private LoadNodes(nodes: Node[]) : void {
+        private loadNodes(nodes: Node[]) : void {
 
             this.treeManager = new TreeManager({
                 $: this.$,
