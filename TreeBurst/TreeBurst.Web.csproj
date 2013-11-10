@@ -69,6 +69,12 @@
     <TypeScriptCompile Include="Scripts\app\Data\DemoNodes.ts" />
     <TypeScriptCompile Include="Scripts\app\DMC.TreeBurst.TreeCanvas.ts" />
     <TypeScriptCompile Include="Scripts\app\DMC.TreeBurst.CanvasNode.ts" />
+    <Content Include="Scripts\app\DMC.TreeBurst.Application.js" />
+    <Content Include="Scripts\app\DMC.TreeBurst.CanvasNode.js" />
+    <Content Include="Scripts\app\DMC.TreeBurst.Node.js" />
+    <Content Include="Scripts\app\DMC.TreeBurst.TreeCanvas.js" />
+    <Content Include="Scripts\app\DMC.TreeBurst.TreeManager.js" />
+    <Content Include="Scripts\app\references.js" />
     <Content Include="Scripts\lib\jquery-2.0.3.js" />
     <Content Include="Scripts\lib\jquery-2.0.3.min.js" />
     <Content Include="Scripts\typings\jquery\jquery.d.ts" />
@@ -121,7 +127,7 @@
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
     <TypeScriptTarget>ES5</TypeScriptTarget>
     <TypeScriptIncludeComments>true</TypeScriptIncludeComments>
-    <TypeScriptSourceMap>true</TypeScriptSourceMap>
+    <TypeScriptSourceMap>false</TypeScriptSourceMap>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <TypeScriptTarget>ES5</TypeScriptTarget>
