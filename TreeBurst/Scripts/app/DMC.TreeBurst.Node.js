@@ -50,4 +50,3 @@ var DMC;
     })(DMC.TreeBurst || (DMC.TreeBurst = {}));
     var TreeBurst = DMC.TreeBurst;
 })(DMC || (DMC = {}));
-//# sourceMappingURL=DMC.TreeBurst.Node.js.map

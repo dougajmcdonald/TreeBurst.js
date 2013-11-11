@@ -24,6 +24,15 @@
         <option value="4">Depth 3 - Root with grandchildren, unbalanced</option>
         <option value="5">Depth 4 - Complex unbalanced tree</option>
     </select>
+    <section id="debugControls">
+        <h2>Position</h2>
+        <div id="mousePosition"></div>
+        <h2>Colour</h2>
+        <div id="pixelColour"></div>
+        <div id="pixelPallette"></div>
+        <h2>Node</h2>
+        <div id="nodeInfo"></div>
+    </section>
     <div class="tbContainer">
         <canvas id="tbCanvas" width="500" height="500"></canvas>
     </div>
@@ -36,12 +45,12 @@
                 this.demoNodes = new DMC.TreeBurst.Data.DemoNodes(nodeSet);
 
                 this.treeBurst = new DMC.TreeBurst.Application(jQuery, {
-                    name: "Doug",
                     nodes: this.demoNodes.getNodes(),
-                    canvasEl: document.getElementById('tbCanvas'),
+                    canvasElId: 'tbCanvas',
                     width: 800,
                     height: 600,
-                    radius: 50
+                    radius: 50,
+                    debug: true
                 });
             }
 

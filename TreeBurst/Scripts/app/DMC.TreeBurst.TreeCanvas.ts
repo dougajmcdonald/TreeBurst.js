@@ -40,6 +40,12 @@ module DMC.TreeBurst {
 
         }
 
+        public getPixelColour(): string {
+
+            return "";
+
+        }
+
         private getRandomColour(): string {
             var colour = '#'
             for (var i = 0; i < 6; i++) {

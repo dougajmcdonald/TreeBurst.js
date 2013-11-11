@@ -18,6 +18,10 @@ var DMC;
                 this.createCanvasNodes();
                 this.drawTree();
             }
+            TreeCanvas.prototype.getPixelColour = function () {
+                return "";
+            };
+
             TreeCanvas.prototype.getRandomColour = function () {
                 var colour = '#';
                 for (var i = 0; i < 6; i++) {
@@ -96,4 +100,3 @@ var DMC;
     })(DMC.TreeBurst || (DMC.TreeBurst = {}));
     var TreeBurst = DMC.TreeBurst;
 })(DMC || (DMC = {}));
-//# sourceMappingURL=DMC.TreeBurst.TreeCanvas.js.map

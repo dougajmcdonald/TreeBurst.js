@@ -2,12 +2,12 @@
 module DMC.TreeBurst {
 
     export interface TreeBurstOptions {
-        name: string;
         nodes: Node[];
-        canvasEl: HTMLCanvasElement;
+        canvasElId: string;
         width: number;
         height: number;
         radius: number;
+        debug: boolean;
     }
 
     /**
@@ -22,21 +22,50 @@ module DMC.TreeBurst {
 
         constructor($: JQueryStatic, opts: TreeBurstOptions) {
 
-            console.log("Welcome to TreeBurst: " + opts.name);
+            console.log("Welcome to TreeBurst");
 
             if (opts.nodes) {
                 this.loadNodes(opts.nodes);
             } else {
                 console.log("Error: No nodes passed to application.")
             }
-            this.canvasEl = opts.canvasEl;
-            this.setupCanvas(opts.canvasEl, opts.width, opts.height);
+            this.canvasEl = <HTMLCanvasElement>document.getElementById(opts.canvasElId);
+            this.setupCanvas(this.canvasEl, opts.width, opts.height);
 
             this.treeCanvas = new TreeCanvas({
                 treeManager: this.treeManager,
-                canvas: opts.canvasEl,
+                canvas: this.canvasEl,
                 radius: opts.radius
             });
+
+            if (opts.debug) {
+                this.setupDebugControls();
+            } else {
+                $("#debugControls").empty().hide();
+            }
+        }
+
+        private setupDebugControls(): void {
+
+            // setup the handler to detect the current pixel for tooltip
+            $(this.canvasEl).on('mousemove', (e: JQueryEventObject) => {
+
+                var x = parseInt((e.clientX - this.canvasEl.getBoundingClientRect().left).toString(), 10);
+                var y = parseInt((e.clientY - this.canvasEl.getBoundingClientRect().top).toString(), 10);
+
+                if (x < 0 || y < 0) {
+                    return;
+                }
+
+                var pixel = this.canvasEl.getContext("2d").getImageData(x, y, 1, 1);
+
+                var rgba = "rgba(" + pixel.data[0] + ", " + pixel.data[1] + ", " + pixel.data[2] + ", " + pixel.data[3] + ")";
+
+                $('#mousePosition').text("x: " + x + "  " + "y: " + y);
+                $('#pixelColour').text(rgba);
+                $('#pixelPallette').css('background-color', rgba);
+
+            }); 
 
         }
 
@@ -70,5 +99,7 @@ module DMC.TreeBurst {
             console.log("Successfully loaded (" + nodes.length + ") nodes");
 
         }
+
+        
     }
 }
