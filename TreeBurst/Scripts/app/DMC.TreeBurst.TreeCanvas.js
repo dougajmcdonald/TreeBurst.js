@@ -4,7 +4,9 @@ var DMC;
     (function (TreeBurst) {
         var TreeCanvas = (function () {
             function TreeCanvas(opts) {
+                var _this = this;
                 this.circle = Math.PI * 2;
+                this.$ = opts.$;
                 this.canvas = opts.canvas;
                 this.treeManager = opts.treeManager;
                 this.context2d = this.canvas.getContext("2d");
@@ -17,38 +19,76 @@ var DMC;
 
                 this.createCanvasNodes();
                 this.drawTree();
+
+                // set a blank tooltip
+                this.tooltip = new TreeBurst.Tooltip({
+                    $: this.$,
+                    title: '',
+                    content: '',
+                    x: 0,
+                    y: 0
+                });
+
+                // setup the handler to detect the current pixel for tooltip
+                $(this.canvas).on('mousemove', function (e) {
+                    var x = parseInt((e.clientX - _this.canvas.getBoundingClientRect().left).toString(), 10);
+                    var y = parseInt((e.clientY - _this.canvas.getBoundingClientRect().top).toString(), 10);
+
+                    if (x < 0 || y < 0) {
+                        return;
+                    }
+
+                    var pixel = _this.canvas.getContext("2d").getImageData(x, y, 1, 1);
+
+                    var rgba = "rgba(" + pixel.data[0] + "," + pixel.data[1] + "," + pixel.data[2] + "," + pixel.data[3] + ")";
+
+                    var node = _this.getNodeByColour(rgba);
+
+                    if (node) {
+                        _this.tooltip.show();
+
+                        _this.tooltip.update(e.clientX, e.clientY, node.title, node.content);
+                    } else {
+                        _this.tooltip.hide();
+                    }
+                });
             }
-            TreeCanvas.prototype.getPixelColour = function () {
-                return "";
+            TreeCanvas.prototype.getNodeByColour = function (colour) {
+                return this.nodes.filter(function (node, index) {
+                    return node.colour === colour;
+                })[0];
             };
 
             TreeCanvas.prototype.getRandomColour = function () {
-                var colour = '#';
-                for (var i = 0; i < 6; i++) {
-                    colour += Math.floor((Math.random() * 9)).toString();
+                var colour = 'rgba(';
+                for (var i = 0; i < 3; i++) {
+                    colour += Math.floor((Math.random() * 255)).toString() + ',';
                 }
+                colour += '255)';
                 return colour;
             };
 
             TreeCanvas.prototype.drawTree = function () {
                 // sort the nodes by depth, we want to draw from the outside in as we overwrite portions of the outer circle with the inner
                 // circles until we reach the root
-                var sortedNodes = this.nodes.sort(function (a, b) {
-                    return a.getDepth() - b.getDepth();
-                });
+                var sortedNodes = this.sortByDepth(this.nodes);
 
-                var currentNode = sortedNodes.pop();
+                for (var i = sortedNodes.length - 1; i >= 0; i--) {
+                    var currentNode = sortedNodes[i];
 
-                while (currentNode) {
                     this.context2d.fillStyle = currentNode.colour;
                     this.context2d.beginPath();
                     this.context2d.moveTo(this.xOrigin, this.yOrigin);
                     this.context2d.arc(this.xOrigin, this.yOrigin, currentNode.radius, currentNode.startRadian, currentNode.endRadian);
                     this.context2d.fill();
                     this.context2d.closePath();
-
-                    currentNode = this.nodes.pop();
                 }
+            };
+
+            TreeCanvas.prototype.sortByDepth = function (nodes) {
+                return this.nodes.sort(function (a, b) {
+                    return a.depth - b.depth;
+                });
             };
 
             TreeCanvas.prototype.createCanvasNodes = function () {
@@ -85,7 +125,7 @@ var DMC;
                     }
 
                     // set radius and start/end angles
-                    canvasNode.radius = (canvasNode.getDepth() + 1) * _this.radius;
+                    canvasNode.radius = (canvasNode.depth + 1) * _this.radius;
                     canvasNode.startRadian = parentNode.startRadian + (notch * index);
                     canvasNode.endRadian = parentNode.startRadian + (notch * (index + 1));
 

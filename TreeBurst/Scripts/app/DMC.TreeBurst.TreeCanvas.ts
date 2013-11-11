@@ -3,7 +3,7 @@ module DMC.TreeBurst {
 
 
     export interface TreeCanvasOptions {
-
+        $: JQueryStatic;
         canvas: HTMLCanvasElement;
         treeManager: TreeManager;
         radius: number;
@@ -11,20 +11,26 @@ module DMC.TreeBurst {
 
     export class TreeCanvas {
 
+        private $: JQueryStatic;
         private canvas: HTMLCanvasElement;
         private treeManager: TreeManager;
         private context2d: CanvasRenderingContext2D;
         private width: number;
         private height: number;
-        private radius: number;
+        private radius: number;  
+
+        private tooltip: Tooltip;
 
         private xOrigin: number;
         private yOrigin: number;
         private nodes: CanvasNode[];
         private circle: number = Math.PI * 2;
 
+        private currentColour: string;
+
         constructor(opts: TreeCanvasOptions) {
 
+            this.$ = opts.$;
             this.canvas = <HTMLCanvasElement>opts.canvas;
             this.treeManager = opts.treeManager;
             this.context2d = this.canvas.getContext("2d");
@@ -38,44 +44,86 @@ module DMC.TreeBurst {
             this.createCanvasNodes();
             this.drawTree();
 
+            // set a blank tooltip
+            this.tooltip = new Tooltip({
+                $: this.$,
+                title: '',
+                content: '',
+                x: 0,
+                y: 0
+            });
+
+            // setup the handler to detect the current pixel for tooltip
+            $(this.canvas).on('mousemove', (e: JQueryEventObject) => {
+
+                var x = parseInt((e.clientX - this.canvas.getBoundingClientRect().left).toString(), 10);
+                var y = parseInt((e.clientY - this.canvas.getBoundingClientRect().top).toString(), 10);
+
+                if (x < 0 || y < 0) {
+                    return;
+                }
+
+                var pixel = this.canvas.getContext("2d").getImageData(x, y, 1, 1);
+
+                var rgba = "rgba(" + pixel.data[0] + "," + pixel.data[1] + "," + pixel.data[2] + "," + pixel.data[3] + ")";
+
+                var node: CanvasNode = this.getNodeByColour(rgba);
+
+                if (node) {
+
+                    this.tooltip.show();
+
+                    this.tooltip.update(e.clientX, e.clientY, node.title, node.content);
+
+                } else {
+                    this.tooltip.hide();
+                }
+
+            });
+
         }
 
-        public getPixelColour(): string {
-
-            return "";
+        public getNodeByColour(colour: string): CanvasNode {
+            return this.nodes.filter((node: CanvasNode, index: number) => {
+                return node.colour === colour;
+            })[0]; // Todo, filter to find one node doesn't seem sensible
 
         }
 
         private getRandomColour(): string {
-            var colour = '#'
-            for (var i = 0; i < 6; i++) {
-                colour += Math.floor((Math.random() * 9)).toString();
+            var colour = 'rgba('
+            for (var i = 0; i < 3; i++) {
+                colour += Math.floor((Math.random() * 255)).toString() + ',';
             }
+            colour += '255)';
             return colour;
         }
+
 
         public drawTree(): void {
 
             // sort the nodes by depth, we want to draw from the outside in as we overwrite portions of the outer circle with the inner
             // circles until we reach the root
-            var sortedNodes = this.nodes.sort((a: CanvasNode, b: CanvasNode) => {
-                return a.getDepth() - b.getDepth();
-            });
-                
-            var currentNode = sortedNodes.pop();
+            var sortedNodes = this.sortByDepth(this.nodes);
 
-            while (currentNode) {
-            
+            for (var i = sortedNodes.length - 1; i >= 0; i--) {
+
+                var currentNode = sortedNodes[i];
+
                 this.context2d.fillStyle = currentNode.colour;
                 this.context2d.beginPath();
                 this.context2d.moveTo(this.xOrigin, this.yOrigin);
                 this.context2d.arc(this.xOrigin, this.yOrigin, currentNode.radius, currentNode.startRadian, currentNode.endRadian);
                 this.context2d.fill();
                 this.context2d.closePath();
-
-                currentNode = this.nodes.pop();
+                
             }
+        }
 
+        private sortByDepth(nodes: CanvasNode[]): CanvasNode[] {
+            return this.nodes.sort((a: CanvasNode, b: CanvasNode) => {
+                return a.depth - b.depth;
+            });    
         }
 
         public createCanvasNodes() {
@@ -113,7 +161,7 @@ module DMC.TreeBurst {
                     canvasNode.colour = this.getRandomColour();
                 }
                 // set radius and start/end angles
-                canvasNode.radius = (canvasNode.getDepth() + 1) * this.radius;     
+                canvasNode.radius = (canvasNode.depth + 1) * this.radius;     
                 canvasNode.startRadian = parentNode.startRadian + (notch * index);
                 canvasNode.endRadian = parentNode.startRadian + (notch * (index + 1));                
 

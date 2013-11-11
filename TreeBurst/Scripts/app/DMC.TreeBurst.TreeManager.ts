@@ -26,7 +26,7 @@ module DMC.TreeBurst {
             // set the root
             var depth = 0;
             this.root = this.getRootNode();
-            this.root.setDepth(depth);
+            this.root.depth = depth;
 
             // then recursively set tiers on all children
             this.parseChildren(this.root, depth);
@@ -56,7 +56,7 @@ module DMC.TreeBurst {
 
         public parseChildren(node: Node, depth: number): void {
 
-            node.setDepth(depth);
+            node.depth = depth;
 
             var kids = this.getChildren(node);
 
@@ -74,7 +74,7 @@ module DMC.TreeBurst {
             // todo: should we store children in a node? 
             // seems heavy to go through them all each time we need a child
             return this.nodes.filter((value: Node, index: number) => {
-                return value.getParentId() === parentNode.getId();
+                return value.parentId === parentNode.id;
             });
         }
 

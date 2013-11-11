@@ -4,9 +4,11 @@
 @bg: #111;
 @canvasbg: #222;
 @grey: #ccc;
+
 .greyBorder {
     border: 1px solid #ccc;
 }
+
 .whiteBorder {
     border: 1px solid #fff;
 }
@@ -48,17 +50,17 @@ h1 {
     z-index: 100;
 }
 
-#debugControls > h2 {
-    font-size: 1.1em;
-    font-weight: normal;
-    color: #ccc;
-    margin: 5px;
-    clear: both;
-}
+    #debugControls > h2 {
+        font-size: 1.1em;
+        font-weight: normal;
+        color: #ccc;
+        margin: 5px;
+        clear: both;
+    }
 
 #pixelColour, #mousePosition {
     width: 200px;
-    height: 30px;    
+    height: 30px;
     float: left;
     padding: 10px 0 0 10px;
 }
@@ -83,4 +85,27 @@ canvas {
     background-color: @canvasbg;
     border-left: 1px solid @grey;
     border-right: 1px solid @grey;
+}
+
+/* Tooltip */
+
+.tooltip {
+    display: none;
+    width: 200px;
+    height: 200px;
+    .whiteBorder;
+    background-color: @bg;
+    z-index: 101;
+    position: absolute;
+    color: #fff;
+    padding: 10px;
+}
+
+.tooltip > header {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+.tooltip > .content {
+    padding: 10px;
 }

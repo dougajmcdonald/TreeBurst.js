@@ -7,8 +7,6 @@ var DMC;
         */
         var Application = (function () {
             function Application($, opts) {
-                console.log("Welcome to TreeBurst");
-
                 if (opts.nodes) {
                     this.loadNodes(opts.nodes);
                 } else {
@@ -18,6 +16,7 @@ var DMC;
                 this.setupCanvas(this.canvasEl, opts.width, opts.height);
 
                 this.treeCanvas = new TreeBurst.TreeCanvas({
+                    $: $,
                     treeManager: this.treeManager,
                     canvas: this.canvasEl,
                     radius: opts.radius
@@ -42,11 +41,17 @@ var DMC;
 
                     var pixel = _this.canvasEl.getContext("2d").getImageData(x, y, 1, 1);
 
-                    var rgba = "rgba(" + pixel.data[0] + ", " + pixel.data[1] + ", " + pixel.data[2] + ", " + pixel.data[3] + ")";
+                    var rgba = "rgba(" + pixel.data[0] + "," + pixel.data[1] + "," + pixel.data[2] + "," + pixel.data[3] + ")";
 
                     $('#mousePosition').text("x: " + x + "  " + "y: " + y);
                     $('#pixelColour').text(rgba);
                     $('#pixelPallette').css('background-color', rgba);
+
+                    var node = _this.treeCanvas.getNodeByColour(rgba);
+
+                    if (node) {
+                        $('#nodeInfo').text("{ id: " + node.id + ", " + "parentId: " + node.parentId + ", " + "colour: " + node.colour + ", " + "depth: " + node.depth + ", " + "title: " + node.title + ", " + "content: " + node.content + "}");
+                    }
                 });
             };
 
@@ -59,11 +64,6 @@ var DMC;
                 // centre it horizontally
                 var pw = $(canvas).parent().width();
                 canvas.style.left = (pw - canvas.width) / 2 + "px";
-            };
-
-            Application.prototype.clearCanvas = function () {
-                this.canvasEl.width = 0;
-                this.canvasEl.height = 0;
             };
 
             // load the nodes we recieved into the nodetree

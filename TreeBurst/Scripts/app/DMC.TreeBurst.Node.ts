@@ -15,11 +15,11 @@ module DMC.TreeBurst {
 
     export class Node {
 
-        private id: number;
-        private parentId: number = null;
-        private title: string;
-        private content: string = null;        
-        private depth: number = null;
+        public id: number;
+        public parentId: number = null;
+        public title: string;
+        public content: string = null;        
+        public depth: number = null;
 
         public colour: string = null;
 
@@ -37,22 +37,6 @@ module DMC.TreeBurst {
             if (opts.colour) {
                 this.colour = opts.colour;
             }
-        }
-
-        public setDepth(depth: number): void {
-            this.depth = depth;
-        }
-
-        public getDepth(): number {
-            return this.depth;
-        }
-
-        public getParentId(): number {
-            return this.parentId;
-        }
-
-        public getId(): number {
-            return this.id;
         }
 
         public isRoot(): boolean {

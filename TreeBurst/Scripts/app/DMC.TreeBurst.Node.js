@@ -21,22 +21,6 @@ var DMC;
                     this.colour = opts.colour;
                 }
             }
-            Node.prototype.setDepth = function (depth) {
-                this.depth = depth;
-            };
-
-            Node.prototype.getDepth = function () {
-                return this.depth;
-            };
-
-            Node.prototype.getParentId = function () {
-                return this.parentId;
-            };
-
-            Node.prototype.getId = function () {
-                return this.id;
-            };
-
             Node.prototype.isRoot = function () {
                 return this.parentId === null;
             };

@@ -25,7 +25,8 @@ module DMC.TreeBurst.Data {
                         new Node({
                             id: 1,
                             parentId: null,
-                            title: "root"
+                            title: "root",
+                            content: "Some demo content for the root"
                         })
                     ];
                     break;
@@ -35,18 +36,21 @@ module DMC.TreeBurst.Data {
                         new Node({
                             id: 1,
                             parentId: null,
-                            title: "root"
+                            title: "root",
+                            content: "Some demo content for the root"
                         }),
                         // level 1
                         new Node({
                             id: 2,
                             parentId: 1,
-                            title: "child 1"
+                            title: "child 1",
+                            content: "content for child 1",
                         }),
                         new Node({
                             id: 3,
                             parentId: 1,
-                            title: "child 2"
+                            title: "child 2",
+                            content: "content for child 2"
                         })
                     ]
                     break;
@@ -56,39 +60,46 @@ module DMC.TreeBurst.Data {
                         new Node({
                             id: 1,
                             parentId: null,
-                            title: "root"
+                            title: "root",
+                            content: "Some demo content for the root"
                         }),
                         // level 1
                         new Node({
                             id: 2,
                             parentId: 1,
-                            title: "child 1"
+                            title: "child 1",
+                            content: "content for child 1"
                         }),
                         new Node({
                             id: 3,
                             parentId: 1,
-                            title: "child 2"
+                            title: "child 2",
+                            content: "content for child 2"
                         }),
                         // level 2
                         new Node({
                             id: 5,
                             parentId: 2,
-                            title: "grand child 1"
+                            title: "grand child 1",
+                            content: "content for grand child 1"
                         }),
                         new Node({
                             id: 6,
                             parentId: 2,
-                            title: "grand child 2"
+                            title: "grand child 2",
+                            content: "content for grand child 2"
                         }),
                         new Node({
                             id: 7,
                             parentId: 3,
-                            title: "grand child 3"
+                            title: "grand child 3",
+                            content: "content for grand child 3"
                         }),
                         new Node({
                             id: 8,
                             parentId: 3,
-                            title: "grand child 4"
+                            title: "grand child 4",
+                            content: "content for grand child 4"
                         })
                     ]
 
@@ -99,39 +110,46 @@ module DMC.TreeBurst.Data {
                         new Node({
                             id: 1,
                             parentId: null,
-                            title: "root"
+                            title: "root",
+                            content: "Some demo content for the root"
                         }),
                         // level 1
                         new Node({
                             id: 2,
                             parentId: 1,
-                            title: "child 1"
+                            title: "child 1",
+                            content: "content for child 1",
                         }),
                         new Node({
                             id: 3,
                             parentId: 1,
-                            title: "child 2"
+                            title: "child 2",
+                            content: "content for child 2",
                         }),
                         // level 2
                         new Node({
                             id: 5,
                             parentId: 2,
-                            title: "grand child 1"
+                            title: "grand child 1",
+                            content: "content for grand child 1"
                         }),
                         new Node({
                             id: 6,
                             parentId: 3,
-                            title: "grand child 2"
+                            title: "grand child 2",
+                            content: "content for grand child 2"
                         }),
                         new Node({
                             id: 7,
                             parentId: 3,
-                            title: "grand child 3"
+                            title: "grand child 3",
+                            content: "content for grand child 3"
                         }),
                         new Node({
                             id: 8,
                             parentId: 3,
-                            title: "grand child 4"
+                            title: "grand child 4",
+                            content: "content for grand child 4"
                         })
                     ]
                     break;
@@ -141,82 +159,95 @@ module DMC.TreeBurst.Data {
                         new Node({
                             id: 1,
                             parentId: null,
-                            title: "root"
+                            title: "root",
+                            content: "demo content for root node"
                         }),
                         // level 1
                         new Node({
                             id: 2,
                             parentId: 1,
-                            title: "child 1"
+                            title: "child 1",
+                            content: "content for child 1"
                         }),
                         new Node({
                             id: 3,
                             parentId: 1,
-                            title: "child 2"
+                            title: "child 2",
+                            content: "content for child 2"
                         }),
                         new Node({
                             id: 4,
                             parentId: 1,
-                            title: "child 3"
+                            title: "child 3",
+                            content: "content for child 3"
                         }),
                         // level 2
                         new Node({
                             id: 5,
                             parentId: 2,
-                            title: "grand child 1"
+                            title: "grand child 1",
+                            content: "content for grand child 1"
                         }),
                         new Node({
                             id: 6,
                             parentId: 3,
-                            title: "grand child 2"
+                            title: "grand child 2",
+                            content: "content for grand child 2"
                         }),
                         new Node({
                             id: 7,
                             parentId: 3,
-                            title: "grand child 3"
+                            title: "grand child 3",
+                            content: "content for grand child 3"
                         }),
                         new Node({
                             id: 8,
                             parentId: 4,
-                            title: "grand child 4"
+                            title: "grand child 4",
+                            content: "content for grand child 4"
                         }),
                         new Node({
                             id: 9,
                             parentId: 4,
-                            title: "grand child 5"
+                            title: "grand child 5",
+                            content: "content for grand child 5"
                         }),
                         new Node({
                             id: 10,
                             parentId: 4,
-                            title: "grand child 6"
+                            title: "grand child 6",
+                            content: "content for grand child 6"
                         }),
                         //level 3
                         new Node({
                             id: 11,
                             parentId: 10,
-                            title: "grand grand child 1"
+                            title: "grand grand child 1",
+                            content: "content for grand grand child 1"
                         }),
                         new Node({
                             id: 12,
                             parentId: 7,
-                            title: "grand grand child 2"
+                            title: "grand grand child 2",
+                            content: "content for grand grand child 2"
                         }),
                         // level 4
                         new Node({
                             id: 13,
                             parentId: 12,
-                            title: "grand grand grand child 1"
+                            title: "grand grand grand child 1",
+                            content: "content for grand grand grand child 1"
                         }),
                         new Node({
                             id: 14,
                             parentId: 12,
-                            title: "grand grand grand child 2"
+                            title: "grand grand grand child 2",
+                            content: "content for grand grand grand child 2"
                         })
                     ];
                     break;
 
             }
-            console.log(this.nodes);
             return this.nodes;
         }
     }

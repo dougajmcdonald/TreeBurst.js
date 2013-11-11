@@ -73,6 +73,8 @@
     <Content Include="Scripts\app\DMC.TreeBurst.Application.js" />
     <Content Include="Scripts\app\DMC.TreeBurst.CanvasNode.js" />
     <Content Include="Scripts\app\DMC.TreeBurst.Node.js" />
+    <TypeScriptCompile Include="Scripts\app\DMC.TreeBurst.Tooltip.ts" />
+    <Content Include="Scripts\app\DMC.TreeBurst.ToolTip.js" />
     <Content Include="Scripts\app\DMC.TreeBurst.TreeCanvas.js" />
     <Content Include="Scripts\app\DMC.TreeBurst.TreeManager.js" />
     <Content Include="Scripts\app\references.js" />

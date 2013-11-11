@@ -70,3 +70,22 @@ canvas {
   border-left: 1px solid #cccccc;
   border-right: 1px solid #cccccc;
 }
+/* Tooltip */
+.tooltip {
+  display: none;
+  width: 200px;
+  height: 200px;
+  border: 1px solid #fff;
+  background-color: #111111;
+  z-index: 101;
+  position: absolute;
+  color: #fff;
+  padding: 10px;
+}
+.tooltip > header {
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+}
+.tooltip > .content {
+  padding: 10px;
+}

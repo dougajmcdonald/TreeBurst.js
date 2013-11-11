@@ -1,3 +1,4 @@
+/// <reference path="DMC.TreeBurst.ToolTip.ts" />
 /// <reference path="DMC.TreeBurst.Application.ts" />
 /// <reference path="DMC.TreeBurst.TreeManager.ts" />
 /// <reference path="DMC.TreeBurst.TreeCanvas.ts" />

@@ -15,7 +15,7 @@ var DMC;
                 // set the root
                 var depth = 0;
                 this.root = this.getRootNode();
-                this.root.setDepth(depth);
+                this.root.depth = depth;
 
                 // then recursively set tiers on all children
                 this.parseChildren(this.root, depth);
@@ -42,7 +42,7 @@ var DMC;
             };
 
             TreeManager.prototype.parseChildren = function (node, depth) {
-                node.setDepth(depth);
+                node.depth = depth;
 
                 var kids = this.getChildren(node);
 
@@ -59,7 +59,7 @@ var DMC;
                 // todo: should we store children in a node?
                 // seems heavy to go through them all each time we need a child
                 return this.nodes.filter(function (value, index) {
-                    return value.getParentId() === parentNode.getId();
+                    return value.parentId === parentNode.id;
                 });
             };
 
