@@ -30,6 +30,8 @@ module DMC.TreeBurst {
 
             this.tooltipDom = this.$(this.tooltipTemplate);
 
+            this.$('.tbContainer').append(this.tooltipDom);
+
         }
 
         public show(): void {
@@ -39,9 +41,6 @@ module DMC.TreeBurst {
 
             //this.tooltipDom.css('left', this.x + 100 + "px");
             //this.tooltipDom.css('top', this.y + 100 + "px");
-
-            this.$('.tbContainer').append(this.tooltipDom);
-
             this.tooltipDom.fadeIn("fast");
 
         }

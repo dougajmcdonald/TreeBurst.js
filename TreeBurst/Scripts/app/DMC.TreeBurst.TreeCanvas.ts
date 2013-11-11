@@ -17,7 +17,7 @@ module DMC.TreeBurst {
         private context2d: CanvasRenderingContext2D;
         private width: number;
         private height: number;
-        private radius: number;  
+        private radius: number;
 
         private tooltip: Tooltip;
 
@@ -73,7 +73,7 @@ module DMC.TreeBurst {
 
                     this.tooltip.show();
 
-                    this.tooltip.update(e.clientX, e.clientY, node.title, node.content);
+                    this.throttle(this.tooltip.update(e.clientX, e.clientY, node.title, node.content), 1000, this);
 
                 } else {
                     this.tooltip.hide();
@@ -81,6 +81,29 @@ module DMC.TreeBurst {
 
             });
 
+        }
+
+        private throttle(fn: any, threshhold: number, scope) {
+            threshhold || (threshhold = 250);
+
+            var last, deferTimer;
+            return () => {
+                var context = scope || this;
+
+                var now = +new Date,
+                    args = arguments;
+                if (last && now < last + threshhold) {
+                    // hold on to it
+                    clearTimeout(deferTimer);
+                    deferTimer = setTimeout(function () {
+                        last = now;
+                        fn.apply(context, args);
+                    }, threshhold);
+                } else {
+                    last = now;
+                    fn.apply(context, args);
+                }
+            }
         }
 
         public getNodeByColour(colour: string): CanvasNode {
@@ -116,14 +139,14 @@ module DMC.TreeBurst {
                 this.context2d.arc(this.xOrigin, this.yOrigin, currentNode.radius, currentNode.startRadian, currentNode.endRadian);
                 this.context2d.fill();
                 this.context2d.closePath();
-                
+
             }
         }
 
         private sortByDepth(nodes: CanvasNode[]): CanvasNode[] {
             return this.nodes.sort((a: CanvasNode, b: CanvasNode) => {
                 return a.depth - b.depth;
-            });    
+            });
         }
 
         public createCanvasNodes() {
@@ -154,16 +177,16 @@ module DMC.TreeBurst {
 
             children.forEach((child: Node, index: number) => {
 
-                var canvasNode = <CanvasNode>child;                
+                var canvasNode = <CanvasNode>child;
 
                 // only set a random colour if we haven't had one provided from our initial data
                 if (!canvasNode.colour) {
                     canvasNode.colour = this.getRandomColour();
                 }
                 // set radius and start/end angles
-                canvasNode.radius = (canvasNode.depth + 1) * this.radius;     
+                canvasNode.radius = (canvasNode.depth + 1) * this.radius;
                 canvasNode.startRadian = parentNode.startRadian + (notch * index);
-                canvasNode.endRadian = parentNode.startRadian + (notch * (index + 1));                
+                canvasNode.endRadian = parentNode.startRadian + (notch * (index + 1));
 
                 // push the child onto the canvas tree and create its children
                 this.nodes.push(canvasNode);

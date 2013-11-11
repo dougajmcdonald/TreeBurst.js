@@ -47,12 +47,35 @@ var DMC;
                     if (node) {
                         _this.tooltip.show();
 
-                        _this.tooltip.update(e.clientX, e.clientY, node.title, node.content);
+                        _this.throttle(_this.tooltip.update(e.clientX, e.clientY, node.title, node.content), 1000, _this);
                     } else {
                         _this.tooltip.hide();
                     }
                 });
             }
+            TreeCanvas.prototype.throttle = function (fn, threshhold, scope) {
+                var _this = this;
+                threshhold || (threshhold = 250);
+
+                var last, deferTimer;
+                return function () {
+                    var context = scope || _this;
+
+                    var now = +new Date(), args = arguments;
+                    if (last && now < last + threshhold) {
+                        // hold on to it
+                        clearTimeout(deferTimer);
+                        deferTimer = setTimeout(function () {
+                            last = now;
+                            fn.apply(context, args);
+                        }, threshhold);
+                    } else {
+                        last = now;
+                        fn.apply(context, args);
+                    }
+                };
+            };
+
             TreeCanvas.prototype.getNodeByColour = function (colour) {
                 return this.nodes.filter(function (node, index) {
                     return node.colour === colour;

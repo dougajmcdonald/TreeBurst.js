@@ -12,14 +12,14 @@ var DMC;
                 this.y = opts.y;
 
                 this.tooltipDom = this.$(this.tooltipTemplate);
+
+                this.$('.tbContainer').append(this.tooltipDom);
             }
             Tooltip.prototype.show = function () {
                 //this.tooltipDom.find('header').text(this.title);
                 //this.tooltipDom.find('.content').text(this.content);
                 //this.tooltipDom.css('left', this.x + 100 + "px");
                 //this.tooltipDom.css('top', this.y + 100 + "px");
-                this.$('.tbContainer').append(this.tooltipDom);
-
                 this.tooltipDom.fadeIn("fast");
             };
 
