@@ -3,6 +3,8 @@ TreeBurst.js
 
 Tree Node Starburst Visualiser
 
+- Demo URL: http://treeburst.azurewebsites.net/
+
 TreeBurst.js is a JavaScript library written in typescript to generate a 'starburst' visualation of tree nodes.
 
 A StarBurst visualisation is a derivative of a treegraph. The root node is at the centre and for each tier/node depth an additional circle is added.
