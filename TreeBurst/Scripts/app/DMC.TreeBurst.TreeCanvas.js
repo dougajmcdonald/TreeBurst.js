@@ -11,6 +11,7 @@ var DMC;
                 this.treeManager = opts.treeManager;
                 this.context2d = this.canvas.getContext("2d");
                 this.radius = opts.radius;
+                this.debug = opts.debug;
 
                 this.xOrigin = this.canvas.width / 2;
                 this.yOrigin = this.canvas.height / 2;
@@ -31,49 +32,65 @@ var DMC;
 
                 // setup the handler to detect the current pixel for tooltip
                 $(this.canvas).on('mousemove', function (e) {
-                    var x = parseInt((e.clientX - _this.canvas.getBoundingClientRect().left).toString(), 10);
-                    var y = parseInt((e.clientY - _this.canvas.getBoundingClientRect().top).toString(), 10);
+                    _this.mouseX = parseInt((e.clientX - _this.canvas.getBoundingClientRect().left).toString(), 10);
+                    _this.mouseY = parseInt((e.clientY - _this.canvas.getBoundingClientRect().top).toString(), 10);
 
-                    if (x < 0 || y < 0) {
-                        return;
-                    }
-
-                    var pixel = _this.canvas.getContext("2d").getImageData(x, y, 1, 1);
-
-                    var rgba = "rgba(" + pixel.data[0] + "," + pixel.data[1] + "," + pixel.data[2] + "," + pixel.data[3] + ")";
-
-                    var node = _this.getNodeByColour(rgba);
-
-                    if (node) {
-                        _this.tooltip.show();
-
-                        _this.throttle(_this.tooltip.update(e.clientX, e.clientY, node.title, node.content), 1000, _this);
-                    } else {
-                        _this.tooltip.hide();
-                    }
+                    _this.getNodeInfo(_this.mouseX, _this.mouseY);
                 });
             }
-            TreeCanvas.prototype.throttle = function (fn, threshhold, scope) {
+            TreeCanvas.prototype.startThrottleTimer = function () {
+                this.mouseMoveInterval = window.setInterval(this.getNodeInfo(this.mouseX, this.mouseY), 500);
+
+                if (this.mouseX < 0 || this.mouseY < 0) {
+                    console.log("clearing time");
+                    window.clearInterval(this.mouseMoveInterval);
+                }
+            };
+
+            TreeCanvas.prototype.getNode = function (x, y) {
+                //1. get the radius via basic trig
+                var radius = Math.sqrt(Math.pow(x - this.xOrigin, 2) + Math.pow(y - this.yOrigin, 2));
+
+                //console.log(radius);
+                //2. get angle between origins x axis and mouse y value
+                var arctan = Math.atan2(y - this.yOrigin, x - this.xOrigin);
+                var radAngle = (y - this.yOrigin) < 0 ? this.circle + arctan : arctan;
+
+                //2. find the node from the array based on the
+                return this.filterNodeByPosition(radAngle, radius);
+            };
+
+            TreeCanvas.prototype.filterNodeByPosition = function (angle, radius) {
                 var _this = this;
-                threshhold || (threshhold = 250);
+                return this.nodes.filter(function (node) {
+                    return node.startRadian <= angle && node.endRadian >= angle && _this.radius + (node.depth * _this.radius) > radius && _this.radius + ((node.depth > 0 ? node.depth - 1 : -1) * _this.radius) < radius;
+                })[0];
+            };
 
-                var last, deferTimer;
-                return function () {
-                    var context = scope || _this;
+            TreeCanvas.prototype.getNodeInfo = function (x, y) {
+                if (x < 0 || y < 0) {
+                    return;
+                }
 
-                    var now = +new Date(), args = arguments;
-                    if (last && now < last + threshhold) {
-                        // hold on to it
-                        clearTimeout(deferTimer);
-                        deferTimer = setTimeout(function () {
-                            last = now;
-                            fn.apply(context, args);
-                        }, threshhold);
-                    } else {
-                        last = now;
-                        fn.apply(context, args);
+                var node = this.getNode(x, y);
+
+                if (node) {
+                    this.tooltip.show();
+
+                    this.tooltip.update(x + 200, y - 200, node.title, node.content);
+
+                    if (this.debug) {
+                        $('#mousePosition').text("x: " + x + "  " + "y: " + y);
+                        $('#pixelColour').text(node.colour);
+                        $('#pixelPallette').css('background-color', node.colour);
+
+                        if (node) {
+                            $('#nodeInfo').text("{ id: " + node.id + ", " + "parentId: " + node.parentId + ", " + "colour: " + node.colour + ", " + "depth: " + node.depth + ", " + "title: " + node.title + ", " + "content: " + node.content + "}");
+                        }
                     }
-                };
+                } else {
+                    this.tooltip.hide();
+                }
             };
 
             TreeCanvas.prototype.getNodeByColour = function (colour) {

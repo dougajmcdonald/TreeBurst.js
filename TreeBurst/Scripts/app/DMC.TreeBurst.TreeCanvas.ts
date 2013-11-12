@@ -7,6 +7,7 @@ module DMC.TreeBurst {
         canvas: HTMLCanvasElement;
         treeManager: TreeManager;
         radius: number;
+        debug: boolean;
     }
 
     export class TreeCanvas {
@@ -18,6 +19,7 @@ module DMC.TreeBurst {
         private width: number;
         private height: number;
         private radius: number;
+        private debug: boolean;
 
         private tooltip: Tooltip;
 
@@ -27,6 +29,9 @@ module DMC.TreeBurst {
         private circle: number = Math.PI * 2;
 
         private currentColour: string;
+        private mouseX: number;
+        private mouseY: number;
+        private mouseMoveInterval: number;
 
         constructor(opts: TreeCanvasOptions) {
 
@@ -35,6 +40,7 @@ module DMC.TreeBurst {
             this.treeManager = opts.treeManager;
             this.context2d = this.canvas.getContext("2d");
             this.radius = opts.radius;
+            this.debug = opts.debug;
 
             this.xOrigin = this.canvas.width / 2;
             this.yOrigin = this.canvas.height / 2;
@@ -52,58 +58,94 @@ module DMC.TreeBurst {
                 x: 0,
                 y: 0
             });
-
+            
             // setup the handler to detect the current pixel for tooltip
             $(this.canvas).on('mousemove', (e: JQueryEventObject) => {
 
-                var x = parseInt((e.clientX - this.canvas.getBoundingClientRect().left).toString(), 10);
-                var y = parseInt((e.clientY - this.canvas.getBoundingClientRect().top).toString(), 10);
+                this.mouseX = parseInt((e.clientX - this.canvas.getBoundingClientRect().left).toString(), 10);
+                this.mouseY = parseInt((e.clientY - this.canvas.getBoundingClientRect().top).toString(), 10);
 
-                if (x < 0 || y < 0) {
-                    return;
-                }
-
-                var pixel = this.canvas.getContext("2d").getImageData(x, y, 1, 1);
-
-                var rgba = "rgba(" + pixel.data[0] + "," + pixel.data[1] + "," + pixel.data[2] + "," + pixel.data[3] + ")";
-
-                var node: CanvasNode = this.getNodeByColour(rgba);
-
-                if (node) {
-
-                    this.tooltip.show();
-
-                    this.throttle(this.tooltip.update(e.clientX, e.clientY, node.title, node.content), 1000, this);
-
-                } else {
-                    this.tooltip.hide();
-                }
-
+                this.getNodeInfo(this.mouseX, this.mouseY)
+                
             });
 
         }
 
-        private throttle(fn: any, threshhold: number, scope) {
-            threshhold || (threshhold = 250);
+        public startThrottleTimer(): void {
 
-            var last, deferTimer;
-            return () => {
-                var context = scope || this;
+            this.mouseMoveInterval = window.setInterval(this.getNodeInfo(this.mouseX, this.mouseY), 500);
 
-                var now = +new Date,
-                    args = arguments;
-                if (last && now < last + threshhold) {
-                    // hold on to it
-                    clearTimeout(deferTimer);
-                    deferTimer = setTimeout(function () {
-                        last = now;
-                        fn.apply(context, args);
-                    }, threshhold);
-                } else {
-                    last = now;
-                    fn.apply(context, args);
-                }
+            if (this.mouseX < 0 || this.mouseY < 0) {
+                console.log("clearing time");
+                window.clearInterval(this.mouseMoveInterval);
+            }            
+
+        }
+
+        private getNode(x: number, y: number) : CanvasNode {
+
+            //1. get the radius via basic trig
+            var radius = Math.sqrt(Math.pow(x - this.xOrigin, 2) + Math.pow(y - this.yOrigin, 2));
+            //console.log(radius);
+
+            //2. get angle between origins x axis and mouse y value
+            var arctan = Math.atan2(y - this.yOrigin, x - this.xOrigin);
+            var radAngle = (y - this.yOrigin) < 0 ? this.circle + arctan : arctan;
+
+            //2. find the node from the array based on the 
+            return this.filterNodeByPosition(radAngle, radius);            
+
+        }
+
+        private filterNodeByPosition(angle: number, radius: number) : CanvasNode {
+
+            return this.nodes.filter((node: CanvasNode) => {
+
+                return node.startRadian <= angle &&
+                    node.endRadian >= angle &&
+                    this.radius + (node.depth * this.radius) > radius &&
+                    this.radius + ((node.depth > 0 ? node.depth - 1 : - 1) * this.radius) < radius;
+
+            })[0];
+
+        }
+
+        private getNodeInfo(x: number, y: number): void {
+
+            if (x < 0 || y < 0) {
+                return;
             }
+
+            var node = this.getNode(x, y);
+
+            if (node) {
+
+                this.tooltip.show();
+
+                this.tooltip.update(x + 200, y - 200, node.title, node.content);
+
+                if (this.debug) {
+                    $('#mousePosition').text("x: " + x + "  " + "y: " + y);
+                    $('#pixelColour').text(node.colour);
+                    $('#pixelPallette').css('background-color', node.colour);
+
+                    if (node) {
+
+                        $('#nodeInfo').text(
+                            "{ id: " + node.id + ", " +
+                            "parentId: " + node.parentId + ", " +
+                            "colour: " + node.colour + ", " +
+                            "depth: " + node.depth + ", " +
+                            "title: " + node.title + ", " +
+                            "content: " + node.content +
+                            "}");
+                    }
+                }
+
+            } else {
+                this.tooltip.hide();
+            }
+
         }
 
         public getNodeByColour(colour: string): CanvasNode {
@@ -121,7 +163,6 @@ module DMC.TreeBurst {
             colour += '255)';
             return colour;
         }
-
 
         public drawTree(): void {
 

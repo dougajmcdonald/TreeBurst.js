@@ -28,6 +28,10 @@ module DMC.TreeBurst {
             this.x = opts.x;
             this.y = opts.y;
 
+            // first remove all tooltips
+            // TODO: do we ever want more than one?
+            this.$('.tooltip').remove();
+
             this.tooltipDom = this.$(this.tooltipTemplate);
 
             this.$('.tbContainer').append(this.tooltipDom);
