@@ -34,6 +34,11 @@ module DMC.TreeBurst {
         private mouseY: number;
         private mouseMoveInterval: number;
 
+        private canvasXOffset: number;
+        private canvasYOffset: number;
+
+        private rotationStep: number = Math.PI / 8;
+
         constructor(opts: TreeCanvasOptions) {
 
             this.$ = opts.$;
@@ -50,9 +55,13 @@ module DMC.TreeBurst {
             this.xOrigin = this.canvas.width / 2;
             this.yOrigin = this.canvas.height / 2;
 
+            this.canvasXOffset = this.canvas.getBoundingClientRect().left;
+            this.canvasYOffset = this.canvas.getBoundingClientRect().top;
+
             this.nodes = new Array<CanvasNode>();
 
             this.createCanvasNodes();
+
             this.drawTree();
 
             // set a blank tooltip
@@ -63,28 +72,63 @@ module DMC.TreeBurst {
                 x: 0,
                 y: 0
             });
-            
+
             // setup the handler to detect the current pixel for tooltip
             this.$(this.canvas).on('mousemove', (e: JQueryEventObject) => {
+
+                //this.mouseX = parseInt((e.clientX - this.canvasXOffset).toString(), 10);
+                //this.mouseY = parseInt((e.clientY - this.canvasYOffset).toString(), 10);
 
                 this.mouseX = parseInt((e.clientX - this.canvas.getBoundingClientRect().left).toString(), 10);
                 this.mouseY = parseInt((e.clientY - this.canvas.getBoundingClientRect().top).toString(), 10);
 
                 this.getNodeInfo(this.mouseX, this.mouseY)
-                
+
             });
 
             this.$('#rRight').on('click', (e: JQueryEventObject) => {
-                this.rotation += Math.PI / 4;
-                this.rotate(this.rotation);
+
+                this.rotation -= this.rotationStep;
+
+                if (this.rotation < 0) {
+                    this.rotation += this.circle;
+                }
+
+                this.clear();
+
+                this.rotate();
+
                 this.drawTree();
             });
 
             this.$('#rLeft').on('click', (e: JQueryEventObject) => {
-                this.circle -= Math.PI / 4;
-                this.rotate(this.rotation);
+
+                this.rotation += this.rotationStep;
+
+                if (this.rotation > this.circle) {
+                    this.rotation -= this.circle;
+                }
+
+                this.clear();
+
+                this.rotate();
+
                 this.drawTree();
             });
+
+        }
+
+        private clear(): void {
+
+            // Store the current transformation matrix
+            this.context2d.save();
+
+            // Use the identity matrix while clearing the canvas
+            this.context2d.setTransform(1, 0, 0, 1, 0, 0);
+            this.context2d.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+            // Restore the transform
+            this.context2d.restore();
 
         }
 
@@ -99,12 +143,10 @@ module DMC.TreeBurst {
 
         }
 
-        public rotate(rotationAmount: number) {
+        public rotate() {
 
-            //this.context2d.translate(this.xOrigin, this.yOrigin);
-
-            this.context2d.rotate(rotationAmount);
-            console.log("rotating" + rotationAmount);
+            this.nodes.length = 0;
+            this.createCanvasNodes();            
 
         }
 
@@ -123,15 +165,24 @@ module DMC.TreeBurst {
 
         }
 
-        private filterNodeByPosition(angle: number, radius: number) : CanvasNode {
+        private filterNodeByPosition(angle: number, radius: number): CanvasNode {
 
             return this.nodes.filter((node: CanvasNode) => {
 
-                return node.startRadian <= angle &&
-                    node.endRadian >= angle &&
-                    this.radius + (node.depth * this.radius) > radius &&
-                    this.radius + ((node.depth > 0 ? node.depth - 1 : - 1) * this.radius) < radius;
+                if (node.startRadian < node.endRadian) {
 
+                    return node.startRadian <= angle &&
+                        node.endRadian >= angle &&
+                        this.radius + (node.depth * this.radius) > radius &&
+                        this.radius + ((node.depth > 0 ? node.depth - 1 : - 1) * this.radius) < radius;
+
+                } else {
+
+                    return ((angle >= node.startRadian && angle < this.circle) || (angle <= node.endRadian && angle >= 0)) &&
+                        this.radius + (node.depth * this.radius) > radius &&
+                        this.radius + ((node.depth > 0 ? node.depth - 1 : - 1) * this.radius) < radius;
+
+                }
             })[0];
 
         }
@@ -143,6 +194,7 @@ module DMC.TreeBurst {
             }
 
             var node = this.getNode(x, y);
+            $('#mousePosition').text("x: " + x + "  " + "y: " + y);
 
             if (node) {
 
@@ -151,7 +203,7 @@ module DMC.TreeBurst {
                 this.tooltip.update(x + 200, y - 200, node.title, node.content);
 
                 if (this.debug) {
-                    $('#mousePosition').text("x: " + x + "  " + "y: " + y);
+                    
                     $('#pixelColour').text(node.colour);
                     $('#pixelPallette').css('background-color', node.colour);
 
@@ -171,13 +223,6 @@ module DMC.TreeBurst {
             } else {
                 this.tooltip.hide();
             }
-
-        }
-
-        public getNodeByColour(colour: string): CanvasNode {
-            return this.nodes.filter((node: CanvasNode, index: number) => {
-                return node.colour === colour;
-            })[0]; // Todo, filter to find one node doesn't seem sensible
 
         }
 
@@ -203,15 +248,19 @@ module DMC.TreeBurst {
                 this.context2d.fillStyle = currentNode.colour;
                 this.context2d.beginPath();
                 this.context2d.moveTo(this.xOrigin, this.yOrigin);
-                this.context2d.arc(this.xOrigin, this.yOrigin, currentNode.radius, currentNode.startRadian + this.rotation, currentNode.endRadian + this.rotation);
+                this.context2d.arc(this.xOrigin, this.yOrigin, currentNode.radius, currentNode.startRadian, currentNode.endRadian);
                 this.context2d.fill();
                 this.context2d.closePath();
 
             }
+
+            console.log(this.nodes);
         }
 
-        private sortByDepth(nodes: CanvasNode[]): CanvasNode[] {
+        private sortByDepth(nodes: CanvasNode[]): CanvasNode[]{
+
             return this.nodes.sort((a: CanvasNode, b: CanvasNode) => {
+
                 return a.depth - b.depth;
             });
         }
@@ -254,6 +303,22 @@ module DMC.TreeBurst {
                 canvasNode.radius = (canvasNode.depth + 1) * this.radius;
                 canvasNode.startRadian = parentNode.startRadian + (notch * index);
                 canvasNode.endRadian = parentNode.startRadian + (notch * (index + 1));
+
+                // add on the rotations but only at the first depth, all others will shunt on respectively as they are based on parent start/ends
+                if (canvasNode.depth === 1) {
+                    
+                    canvasNode.startRadian += this.rotation;
+                    canvasNode.endRadian += this.rotation;
+
+                    // cater for wrapping
+                    if (canvasNode.startRadian > this.circle) {
+                        canvasNode.startRadian -= this.circle;
+                    }
+
+                    if (canvasNode.endRadian > this.circle) {
+                        canvasNode.endRadian -= this.circle;
+                    }
+                }
 
                 // push the child onto the canvas tree and create its children
                 this.nodes.push(canvasNode);
