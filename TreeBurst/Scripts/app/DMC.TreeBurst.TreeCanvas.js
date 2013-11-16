@@ -5,6 +5,7 @@ var DMC;
         var TreeCanvas = (function () {
             function TreeCanvas(opts) {
                 var _this = this;
+                this.rotation = 0;
                 this.circle = Math.PI * 2;
                 this.$ = opts.$;
                 this.canvas = opts.canvas;
@@ -12,6 +13,10 @@ var DMC;
                 this.context2d = this.canvas.getContext("2d");
                 this.radius = opts.radius;
                 this.debug = opts.debug;
+
+                if (opts.rotation) {
+                    this.rotation = opts.rotation;
+                }
 
                 this.xOrigin = this.canvas.width / 2;
                 this.yOrigin = this.canvas.height / 2;
@@ -31,11 +36,23 @@ var DMC;
                 });
 
                 // setup the handler to detect the current pixel for tooltip
-                $(this.canvas).on('mousemove', function (e) {
+                this.$(this.canvas).on('mousemove', function (e) {
                     _this.mouseX = parseInt((e.clientX - _this.canvas.getBoundingClientRect().left).toString(), 10);
                     _this.mouseY = parseInt((e.clientY - _this.canvas.getBoundingClientRect().top).toString(), 10);
 
                     _this.getNodeInfo(_this.mouseX, _this.mouseY);
+                });
+
+                this.$('#rRight').on('click', function (e) {
+                    _this.rotation += Math.PI / 4;
+                    _this.rotate(_this.rotation);
+                    _this.drawTree();
+                });
+
+                this.$('#rLeft').on('click', function (e) {
+                    _this.circle -= Math.PI / 4;
+                    _this.rotate(_this.rotation);
+                    _this.drawTree();
                 });
             }
             TreeCanvas.prototype.startThrottleTimer = function () {
@@ -45,6 +62,12 @@ var DMC;
                     console.log("clearing time");
                     window.clearInterval(this.mouseMoveInterval);
                 }
+            };
+
+            TreeCanvas.prototype.rotate = function (rotationAmount) {
+                //this.context2d.translate(this.xOrigin, this.yOrigin);
+                this.context2d.rotate(rotationAmount);
+                console.log("rotating" + rotationAmount);
             };
 
             TreeCanvas.prototype.getNode = function (x, y) {
@@ -119,7 +142,7 @@ var DMC;
                     this.context2d.fillStyle = currentNode.colour;
                     this.context2d.beginPath();
                     this.context2d.moveTo(this.xOrigin, this.yOrigin);
-                    this.context2d.arc(this.xOrigin, this.yOrigin, currentNode.radius, currentNode.startRadian, currentNode.endRadian);
+                    this.context2d.arc(this.xOrigin, this.yOrigin, currentNode.radius, currentNode.startRadian + this.rotation, currentNode.endRadian + this.rotation);
                     this.context2d.fill();
                     this.context2d.closePath();
                 }

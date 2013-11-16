@@ -25,6 +25,8 @@
         <option value="4">Depth 3 - Root with grandchildren, unbalanced</option>
         <option value="5">Depth 4 - Complex unbalanced tree</option>
     </select>
+    <button id="rRight">Rotate right</button>
+    <button id="rLeft">Rotate left</button>
     <section id="debugControls">
         <h2>Position</h2>
         <div id="mousePosition"></div>
@@ -56,9 +58,7 @@
             }
 
             $('#treeDataSelector').on('change', function () {
-
                 init(parseInt(this.value, 10));
-
             });
 
             init(1);

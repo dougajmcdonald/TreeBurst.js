@@ -2,6 +2,14 @@ var DMC;
 (function (DMC) {
     /// <reference path="references.ts" />
     (function (TreeBurst) {
+        (function (State) {
+            State[State["Initialised"] = 0] = "Initialised";
+            State[State["LoadingNodes"] = 1] = "LoadingNodes";
+            State[State["Drawing"] = 2] = "Drawing";
+            State[State["Errored"] = 3] = "Errored";
+        })(TreeBurst.State || (TreeBurst.State = {}));
+        var State = TreeBurst.State;
+
         /**
         * main application entry point
         */
@@ -11,6 +19,7 @@ var DMC;
                     this.loadNodes(opts.nodes);
                 } else {
                     console.log("Error: No nodes passed to application.");
+                    this.appState.Errored;
                 }
                 this.canvasEl = document.getElementById(opts.canvasElId);
                 this.setupCanvas(this.canvasEl, opts.width, opts.height);
@@ -20,8 +29,11 @@ var DMC;
                     treeManager: this.treeManager,
                     canvas: this.canvasEl,
                     radius: opts.radius,
-                    debug: opts.debug
+                    debug: opts.debug,
+                    rotation: opts.rotation
                 });
+
+                this.appState = State.Initialised;
             }
             // setup the canvas for use
             Application.prototype.setupCanvas = function (canvas, width, height) {

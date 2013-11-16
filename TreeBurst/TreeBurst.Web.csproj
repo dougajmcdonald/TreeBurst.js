@@ -14,7 +14,7 @@
     <RootNamespace>TreeBurst</RootNamespace>
     <AssemblyName>TreeBurst</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <UseIISExpress>true</UseIISExpress>
+    <UseIISExpress>false</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
@@ -74,18 +74,25 @@
     <Content Include="Scripts\app\DMC.TreeBurst.CanvasNode.js" />
     <Content Include="Scripts\app\DMC.TreeBurst.Node.js" />
     <TypeScriptCompile Include="Scripts\app\DMC.TreeBurst.Tooltip.ts" />
+    <Content Include="Scripts\app\DMC.TreeBurst.Tests.js" />
     <Content Include="Scripts\app\DMC.TreeBurst.ToolTip.js" />
     <Content Include="Scripts\app\DMC.TreeBurst.TreeCanvas.js" />
     <Content Include="Scripts\app\DMC.TreeBurst.TreeManager.js" />
     <Content Include="Scripts\app\references.js" />
+    <Content Include="Scripts\app\Tests\DMC.TreeBurst.Tests.js" />
+    <Content Include="Scripts\lib\css\qunit-1.12.0.css" />
     <Content Include="Scripts\lib\jquery-2.0.3.js" />
     <Content Include="Scripts\lib\jquery-2.0.3.min.js" />
+    <Content Include="Scripts\lib\qunit-1.12.0.js" />
     <Content Include="Scripts\typings\jquery\jquery.d.ts" />
     <Content Include="Styles\css\CssReset.css" />
     <Content Include="Scripts\lib\modernizr-2.6.2.js" />
     <Content Include="Styles\css\TreeBurst.css" />
     <Content Include="Styles\css\TreeBurst.min.css" />
+    <Content Include="Tests.html" />
     <Content Include="Web.config" />
+    <TypeScriptCompile Include="Scripts\app\Tests\DMC.TreeBurst.Tests.ts" />
+    <TypeScriptCompile Include="Scripts\typings\qunit\qunit.d.ts" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -115,7 +122,16 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <SaveServerSettingsInUserFile>True</SaveServerSettingsInUserFile>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>0</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost/TreeBurst.Web</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
         </WebProjectProperties>
       </FlavorProperties>
     </VisualStudio>
@@ -134,7 +150,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <TypeScriptTarget>ES5</TypeScriptTarget>
-    <TypeScriptIncludeComments>false</TypeScriptIncludeComments>
+    <TypeScriptIncludeComments>true</TypeScriptIncludeComments>
     <TypeScriptSourceMap>false</TypeScriptSourceMap>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets')" />
