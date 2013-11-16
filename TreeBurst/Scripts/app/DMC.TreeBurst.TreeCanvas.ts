@@ -1,13 +1,13 @@
 /// <reference path="references.ts" />
 module DMC.TreeBurst {
 
-
     export interface TreeCanvasOptions {
         $: JQueryStatic;
         canvas: HTMLCanvasElement;
         treeManager: TreeManager;
         radius: number;
         debug: boolean;
+        rotation?: number;
     }
 
     export class TreeCanvas {
@@ -20,6 +20,7 @@ module DMC.TreeBurst {
         private height: number;
         private radius: number;
         private debug: boolean;
+        private rotation: number = 0;
 
         private tooltip: Tooltip;
 
@@ -42,6 +43,10 @@ module DMC.TreeBurst {
             this.radius = opts.radius;
             this.debug = opts.debug;
 
+            if (opts.rotation) {
+                this.rotation = opts.rotation;
+            }
+
             this.xOrigin = this.canvas.width / 2;
             this.yOrigin = this.canvas.height / 2;
 
@@ -60,13 +65,25 @@ module DMC.TreeBurst {
             });
             
             // setup the handler to detect the current pixel for tooltip
-            $(this.canvas).on('mousemove', (e: JQueryEventObject) => {
+            this.$(this.canvas).on('mousemove', (e: JQueryEventObject) => {
 
                 this.mouseX = parseInt((e.clientX - this.canvas.getBoundingClientRect().left).toString(), 10);
                 this.mouseY = parseInt((e.clientY - this.canvas.getBoundingClientRect().top).toString(), 10);
 
                 this.getNodeInfo(this.mouseX, this.mouseY)
                 
+            });
+
+            this.$('#rRight').on('click', (e: JQueryEventObject) => {
+                this.rotation += Math.PI / 4;
+                this.rotate(this.rotation);
+                this.drawTree();
+            });
+
+            this.$('#rLeft').on('click', (e: JQueryEventObject) => {
+                this.circle -= Math.PI / 4;
+                this.rotate(this.rotation);
+                this.drawTree();
             });
 
         }
@@ -79,6 +96,15 @@ module DMC.TreeBurst {
                 console.log("clearing time");
                 window.clearInterval(this.mouseMoveInterval);
             }            
+
+        }
+
+        public rotate(rotationAmount: number) {
+
+            //this.context2d.translate(this.xOrigin, this.yOrigin);
+
+            this.context2d.rotate(rotationAmount);
+            console.log("rotating" + rotationAmount);
 
         }
 
@@ -177,7 +203,7 @@ module DMC.TreeBurst {
                 this.context2d.fillStyle = currentNode.colour;
                 this.context2d.beginPath();
                 this.context2d.moveTo(this.xOrigin, this.yOrigin);
-                this.context2d.arc(this.xOrigin, this.yOrigin, currentNode.radius, currentNode.startRadian, currentNode.endRadian);
+                this.context2d.arc(this.xOrigin, this.yOrigin, currentNode.radius, currentNode.startRadian + this.rotation, currentNode.endRadian + this.rotation);
                 this.context2d.fill();
                 this.context2d.closePath();
 
