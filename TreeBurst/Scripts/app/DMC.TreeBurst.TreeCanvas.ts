@@ -89,31 +89,15 @@ module DMC.TreeBurst {
             this.$('#rRight').on('click', (e: JQueryEventObject) => {
 
                 this.rotation -= this.rotationStep;
-
-                if (this.rotation < 0) {
-                    this.rotation += this.circle;
-                }
-
-                this.clear();
-
                 this.rotate();
 
-                this.drawTree();
             });
 
             this.$('#rLeft').on('click', (e: JQueryEventObject) => {
 
-                this.rotation += this.rotationStep;
-
-                if (this.rotation > this.circle) {
-                    this.rotation -= this.circle;
-                }
-
-                this.clear();
-
+                this.rotation += this.rotationStep;                
                 this.rotate();
 
-                this.drawTree();
             });
 
         }
@@ -145,33 +129,22 @@ module DMC.TreeBurst {
 
         public rotate() {
 
-            //this.context2d.translate(this.xOrigin, this.yOrigin);
+            // clear the canvas
+            this.clear();
 
-            //this.context2d.rotate(rotationAmount);
+            // establise the rotation and ensure between 0 and 2pie
+            if (this.rotation < 0) {
+                this.rotation += this.circle;
+            } else if (this.rotation > this.circle) {
+                this.rotation -= this.circle;
+            }
 
-            //this.nodes.forEach((node: CanvasNode, index: number) => {
-
-            //    if (node.isRoot()) {
-            //        return;
-            //    }
-
-            //    node.startRadian += this.rotation;
-            //    if (node.startRadian > this.circle) {
-            //        node.startRadian -= this.circle;
-            //    }
-
-            //    node.endRadian += this.rotation;
-            //    if (node.endRadian > this.circle) {
-            //        node.endRadian -= this.circle;
-            //    }
-
-            //});
-
+            // clear the nodes and re-create them based on the new rotation
             this.nodes.length = 0;
-            this.createCanvasNodes();
-             
-
-            console.log("rotating" + this.rotation);
+            this.createCanvasNodes();  
+            
+            // redraw the tree with newly rotated nodes
+            this.drawTree();           
 
         }
 
@@ -194,19 +167,16 @@ module DMC.TreeBurst {
 
             return this.nodes.filter((node: CanvasNode) => {
 
+                //TODO: clean this up
                 if (node.startRadian < node.endRadian) {
-
-                    return node.startRadian <= angle &&
-                        node.endRadian >= angle &&
+                    return angle >= node.startRadian  &&
+                        angle <= node.endRadian  &&
                         this.radius + (node.depth * this.radius) > radius &&
                         this.radius + ((node.depth > 0 ? node.depth - 1 : - 1) * this.radius) < radius;
-
                 } else {
-
-                    return ((node.endRadian <= angle && angle < this.circle) || ((node.endRadian - this.circle) <= angle && angle >= 0)) &&
+                    return ((angle >= node.startRadian && angle < this.circle) || (angle <= node.endRadian && angle >= 0)) &&
                         this.radius + (node.depth * this.radius) > radius &&
                         this.radius + ((node.depth > 0 ? node.depth - 1 : - 1) * this.radius) < radius;
-
                 }
             })[0];
 
@@ -218,17 +188,17 @@ module DMC.TreeBurst {
                 return;
             }
 
-            var node = this.getNode(x, y);
-            $('#mousePosition').text("x: " + x + "  " + "y: " + y);
+            var node = this.getNode(x, y);            
 
             if (node) {
 
                 this.tooltip.show();
 
-                this.tooltip.update(x + 200, y - 200, node.title, node.content);
+                this.tooltip.update(x + 100, y - 200, node.title, node.content);
 
                 if (this.debug) {
                     
+                    $('#mousePosition').text("x: " + x + "  " + "y: " + y);
                     $('#pixelColour').text(node.colour);
                     $('#pixelPallette').css('background-color', node.colour);
 
@@ -278,8 +248,6 @@ module DMC.TreeBurst {
                 this.context2d.closePath();
 
             }
-
-            console.log(this.nodes);
         }
 
         private sortByDepth(nodes: CanvasNode[]): CanvasNode[]{
@@ -313,13 +281,9 @@ module DMC.TreeBurst {
             // get children
             var children = this.treeManager.getChildren(parentNode);
 
-            // notch is the radian angle needed for each child
-
-            //TODO: need to detect parents with end < start and ensure that 
-            // 
-
             var notch: number;
 
+            //TODO: clean this up
             if (parentNode.endRadian > parentNode.startRadian) {
                 notch = (parentNode.endRadian - parentNode.startRadian) / children.length;
             } else {
@@ -336,30 +300,24 @@ module DMC.TreeBurst {
                 }
                 // set radius and start/end angles
                 canvasNode.radius = (canvasNode.depth + 1) * this.radius;
-
-
-
                 canvasNode.startRadian = parentNode.startRadian + (notch * index);
                 canvasNode.endRadian = parentNode.startRadian + (notch * (index + 1));
 
                 // add on the rotations but only at the first depth, all others will shunt on respectively as they are based on parent start/ends
                 if (canvasNode.depth === 1) {
-
                     canvasNode.startRadian += this.rotation;
                     canvasNode.endRadian += this.rotation;
-
-                    // cater for wrapping
-                    if (canvasNode.startRadian > this.circle) {
-                        canvasNode.startRadian -= this.circle;
-                    }
-
-                    if (canvasNode.endRadian > this.circle) {
-                        canvasNode.endRadian -= this.circle;
-                    }
-
                 }                     
-                
 
+                // cater for wrapping at all levels, so anything over a 2pies has 2pies taken away
+                // TODO: decide if this is needed or not
+                if (canvasNode.startRadian > this.circle) {
+                    canvasNode.startRadian -= this.circle;
+                }
+
+                if (canvasNode.endRadian > this.circle) {
+                    canvasNode.endRadian -= this.circle;
+                }
 
                 // push the child onto the canvas tree and create its children
                 this.nodes.push(canvasNode);
