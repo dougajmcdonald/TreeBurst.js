@@ -100,8 +100,25 @@ var DMC;
             };
 
             TreeCanvas.prototype.rotate = function () {
+                //this.context2d.translate(this.xOrigin, this.yOrigin);
+                //this.context2d.rotate(rotationAmount);
+                //this.nodes.forEach((node: CanvasNode, index: number) => {
+                //    if (node.isRoot()) {
+                //        return;
+                //    }
+                //    node.startRadian += this.rotation;
+                //    if (node.startRadian > this.circle) {
+                //        node.startRadian -= this.circle;
+                //    }
+                //    node.endRadian += this.rotation;
+                //    if (node.endRadian > this.circle) {
+                //        node.endRadian -= this.circle;
+                //    }
+                //});
                 this.nodes.length = 0;
                 this.createCanvasNodes();
+
+                console.log("rotating" + this.rotation);
             };
 
             TreeCanvas.prototype.getNode = function (x, y) {
@@ -123,7 +140,7 @@ var DMC;
                     if (node.startRadian < node.endRadian) {
                         return node.startRadian <= angle && node.endRadian >= angle && _this.radius + (node.depth * _this.radius) > radius && _this.radius + ((node.depth > 0 ? node.depth - 1 : -1) * _this.radius) < radius;
                     } else {
-                        return ((angle >= node.startRadian && angle < _this.circle) || (angle <= node.endRadian && angle >= 0)) && _this.radius + (node.depth * _this.radius) > radius && _this.radius + ((node.depth > 0 ? node.depth - 1 : -1) * _this.radius) < radius;
+                        return ((node.endRadian <= angle && angle < _this.circle) || ((node.endRadian - _this.circle) <= angle && angle >= 0)) && _this.radius + (node.depth * _this.radius) > radius && _this.radius + ((node.depth > 0 ? node.depth - 1 : -1) * _this.radius) < radius;
                     }
                 })[0];
             };
@@ -212,7 +229,15 @@ var DMC;
                 var children = this.treeManager.getChildren(parentNode);
 
                 // notch is the radian angle needed for each child
-                var notch = (parentNode.endRadian - parentNode.startRadian) / children.length;
+                //TODO: need to detect parents with end < start and ensure that
+                //
+                var notch;
+
+                if (parentNode.endRadian > parentNode.startRadian) {
+                    notch = (parentNode.endRadian - parentNode.startRadian) / children.length;
+                } else {
+                    notch = ((this.circle - parentNode.startRadian) + parentNode.endRadian) / children.length;
+                }
 
                 children.forEach(function (child, index) {
                     var canvasNode = child;
@@ -223,6 +248,7 @@ var DMC;
 
                     // set radius and start/end angles
                     canvasNode.radius = (canvasNode.depth + 1) * _this.radius;
+
                     canvasNode.startRadian = parentNode.startRadian + (notch * index);
                     canvasNode.endRadian = parentNode.startRadian + (notch * (index + 1));
 

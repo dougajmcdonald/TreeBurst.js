@@ -145,8 +145,33 @@ module DMC.TreeBurst {
 
         public rotate() {
 
+            //this.context2d.translate(this.xOrigin, this.yOrigin);
+
+            //this.context2d.rotate(rotationAmount);
+
+            //this.nodes.forEach((node: CanvasNode, index: number) => {
+
+            //    if (node.isRoot()) {
+            //        return;
+            //    }
+
+            //    node.startRadian += this.rotation;
+            //    if (node.startRadian > this.circle) {
+            //        node.startRadian -= this.circle;
+            //    }
+
+            //    node.endRadian += this.rotation;
+            //    if (node.endRadian > this.circle) {
+            //        node.endRadian -= this.circle;
+            //    }
+
+            //});
+
             this.nodes.length = 0;
-            this.createCanvasNodes();            
+            this.createCanvasNodes();
+             
+
+            console.log("rotating" + this.rotation);
 
         }
 
@@ -178,7 +203,7 @@ module DMC.TreeBurst {
 
                 } else {
 
-                    return ((angle >= node.startRadian && angle < this.circle) || (angle <= node.endRadian && angle >= 0)) &&
+                    return ((node.endRadian <= angle && angle < this.circle) || ((node.endRadian - this.circle) <= angle && angle >= 0)) &&
                         this.radius + (node.depth * this.radius) > radius &&
                         this.radius + ((node.depth > 0 ? node.depth - 1 : - 1) * this.radius) < radius;
 
@@ -289,7 +314,17 @@ module DMC.TreeBurst {
             var children = this.treeManager.getChildren(parentNode);
 
             // notch is the radian angle needed for each child
-            var notch: number = (parentNode.endRadian - parentNode.startRadian) / children.length;
+
+            //TODO: need to detect parents with end < start and ensure that 
+            // 
+
+            var notch: number;
+
+            if (parentNode.endRadian > parentNode.startRadian) {
+                notch = (parentNode.endRadian - parentNode.startRadian) / children.length;
+            } else {
+                notch = ((this.circle - parentNode.startRadian) + parentNode.endRadian) / children.length;
+            }
 
             children.forEach((child: Node, index: number) => {
 
@@ -301,12 +336,15 @@ module DMC.TreeBurst {
                 }
                 // set radius and start/end angles
                 canvasNode.radius = (canvasNode.depth + 1) * this.radius;
+
+
+
                 canvasNode.startRadian = parentNode.startRadian + (notch * index);
                 canvasNode.endRadian = parentNode.startRadian + (notch * (index + 1));
 
                 // add on the rotations but only at the first depth, all others will shunt on respectively as they are based on parent start/ends
                 if (canvasNode.depth === 1) {
-                    
+
                     canvasNode.startRadian += this.rotation;
                     canvasNode.endRadian += this.rotation;
 
@@ -318,7 +356,10 @@ module DMC.TreeBurst {
                     if (canvasNode.endRadian > this.circle) {
                         canvasNode.endRadian -= this.circle;
                     }
-                }
+
+                }                     
+                
+
 
                 // push the child onto the canvas tree and create its children
                 this.nodes.push(canvasNode);
