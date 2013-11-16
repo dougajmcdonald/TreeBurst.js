@@ -24,6 +24,21 @@ h1 {
   font-weight: normal;
   margin: 0 0 2em 3em;
 }
+button {
+  border: 1px solid #fff;
+  color: #fff;
+  padding: 5px;
+  background-color: #111111;
+  vertical-align: middle;
+  margin: 0 0 2em 1em;
+}
+button:hover {
+  color: #cccccc;
+}
+button:active {
+  background-color: #cccccc;
+  color: #111111;
+}
 /* Debug controls */
 #debugControls {
   border: 1px solid #fff;
