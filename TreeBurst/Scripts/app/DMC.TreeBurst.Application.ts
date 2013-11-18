@@ -33,12 +33,12 @@ module DMC.TreeBurst {
         constructor($: JQueryStatic, opts: TreeBurstOptions) {
 
             if (opts.nodes) {
-                this.loadNodes(opts.nodes);
-                
+                this.loadNodes(opts.nodes);                
             } else {
                 console.log("Error: No nodes passed to application.")
                 this.appState.Errored;
             }
+
             this.canvasEl = <HTMLCanvasElement>document.getElementById(opts.canvasElId);
             this.setupCanvas(this.canvasEl, opts.width, opts.height);
 

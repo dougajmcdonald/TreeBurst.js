@@ -21,6 +21,7 @@ var DMC;
                     console.log("Error: No nodes passed to application.");
                     this.appState.Errored;
                 }
+
                 this.canvasEl = document.getElementById(opts.canvasElId);
                 this.setupCanvas(this.canvasEl, opts.width, opts.height);
 

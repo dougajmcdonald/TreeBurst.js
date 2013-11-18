@@ -38,6 +38,8 @@ module DMC.TreeBurst {
         private canvasYOffset: number;
 
         private rotationStep: number = Math.PI / 8;
+        private mouseRotation: boolean = false;
+        private timeout: number;
 
         constructor(opts: TreeCanvasOptions) {
 
@@ -74,45 +76,29 @@ module DMC.TreeBurst {
             });
 
             // setup the handler to detect the current pixel for tooltip
-            this.$(this.canvas).on('mousemove', (e: JQueryEventObject) => {
+            this.$(this.canvas).off().on('mousemove', (e: JQueryEventObject) => {
 
-                //this.mouseX = parseInt((e.clientX - this.canvasXOffset).toString(), 10);
-                //this.mouseY = parseInt((e.clientY - this.canvasYOffset).toString(), 10);
+                this.mouseX = parseInt((e.clientX - this.canvasXOffset).toString(), 10);
+                this.mouseY = parseInt((e.clientY - this.canvasYOffset).toString(), 10);
 
-                this.mouseX = parseInt((e.clientX - this.canvas.getBoundingClientRect().left).toString(), 10);
-                this.mouseY = parseInt((e.clientY - this.canvas.getBoundingClientRect().top).toString(), 10);
-
-                this.getNodeInfo(this.mouseX, this.mouseY)
+                this.getNodeInfo(this.mouseX, this.mouseY);
 
             });
 
-            this.$('#rRight').on('click', (e: JQueryEventObject) => {
 
+            this.$('#enableMouseRotate').on('click', (e: JQueryEventObject) => {
+                this.mouseRotation = !this.mouseRotation;
+            });
+
+            this.$('#rRight').off().on('click', (e: JQueryEventObject) => {
                 this.rotation -= this.rotationStep;
                 this.rotate();
-
             });
 
-            this.$('#rLeft').on('click', (e: JQueryEventObject) => {
-
-                this.rotation += this.rotationStep;                
+            this.$('#rLeft').off().on('click', (e: JQueryEventObject) => {
+                this.rotation += this.rotationStep;
                 this.rotate();
-
             });
-
-        }
-
-        private clear(): void {
-
-            // Store the current transformation matrix
-            this.context2d.save();
-
-            // Use the identity matrix while clearing the canvas
-            this.context2d.setTransform(1, 0, 0, 1, 0, 0);
-            this.context2d.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-            // Restore the transform
-            this.context2d.restore();
 
         }
 
@@ -123,111 +109,8 @@ module DMC.TreeBurst {
             if (this.mouseX < 0 || this.mouseY < 0) {
                 console.log("clearing time");
                 window.clearInterval(this.mouseMoveInterval);
-            }            
-
-        }
-
-        public rotate() {
-
-            // clear the canvas
-            this.clear();
-
-            // establise the rotation and ensure between 0 and 2pie
-            if (this.rotation < 0) {
-                this.rotation += this.circle;
-            } else if (this.rotation > this.circle) {
-                this.rotation -= this.circle;
             }
 
-            // clear the nodes and re-create them based on the new rotation
-            this.nodes.length = 0;
-            this.createCanvasNodes();  
-            
-            // redraw the tree with newly rotated nodes
-            this.drawTree();           
-
-        }
-
-        private getNode(x: number, y: number) : CanvasNode {
-
-            //1. get the radius via basic trig
-            var radius = Math.sqrt(Math.pow(x - this.xOrigin, 2) + Math.pow(y - this.yOrigin, 2));
-            //console.log(radius);
-
-            //2. get angle between origins x axis and mouse y value
-            var arctan = Math.atan2(y - this.yOrigin, x - this.xOrigin);
-            var radAngle = (y - this.yOrigin) < 0 ? this.circle + arctan : arctan;
-
-            //2. find the node from the array based on the 
-            return this.filterNodeByPosition(radAngle, radius);            
-
-        }
-
-        private filterNodeByPosition(angle: number, radius: number): CanvasNode {
-
-            return this.nodes.filter((node: CanvasNode) => {
-
-                //TODO: clean this up
-                if (node.startRadian < node.endRadian) {
-                    return angle >= node.startRadian  &&
-                        angle <= node.endRadian  &&
-                        this.radius + (node.depth * this.radius) > radius &&
-                        this.radius + ((node.depth > 0 ? node.depth - 1 : - 1) * this.radius) < radius;
-                } else {
-                    return ((angle >= node.startRadian && angle < this.circle) || (angle <= node.endRadian && angle >= 0)) &&
-                        this.radius + (node.depth * this.radius) > radius &&
-                        this.radius + ((node.depth > 0 ? node.depth - 1 : - 1) * this.radius) < radius;
-                }
-            })[0];
-
-        }
-
-        private getNodeInfo(x: number, y: number): void {
-
-            if (x < 0 || y < 0) {
-                return;
-            }
-
-            var node = this.getNode(x, y);            
-
-            if (node) {
-
-                this.tooltip.show();
-
-                this.tooltip.update(x + 100, y - 200, node.title, node.content);
-
-                if (this.debug) {
-                    
-                    $('#mousePosition').text("x: " + x + "  " + "y: " + y);
-                    $('#pixelColour').text(node.colour);
-                    $('#pixelPallette').css('background-color', node.colour);
-
-                    if (node) {
-
-                        $('#nodeInfo').text(
-                            "{ id: " + node.id + ", " +
-                            "parentId: " + node.parentId + ", " +
-                            "colour: " + node.colour + ", " +
-                            "depth: " + node.depth + ", " +
-                            "title: " + node.title + ", " +
-                            "content: " + node.content +
-                            "}");
-                    }
-                }
-
-            } else {
-                this.tooltip.hide();
-            }
-
-        }
-
-        private getRandomColour(): string {
-            var colour = 'rgba('
-            for (var i = 0; i < 3; i++) {
-                colour += Math.floor((Math.random() * 255)).toString() + ',';
-            }
-            colour += '255)';
-            return colour;
         }
 
         public drawTree(): void {
@@ -250,14 +133,6 @@ module DMC.TreeBurst {
             }
         }
 
-        private sortByDepth(nodes: CanvasNode[]): CanvasNode[]{
-
-            return this.nodes.sort((a: CanvasNode, b: CanvasNode) => {
-
-                return a.depth - b.depth;
-            });
-        }
-
         public createCanvasNodes() {
 
             // get root
@@ -274,6 +149,155 @@ module DMC.TreeBurst {
 
             this.nodes.push(canvasNode);
             this.createCanvasChildren(canvasNode);
+        }
+
+        private rotate() {
+
+            // clear the canvas
+            this.clear();
+
+            // establise the rotation and ensure between 0 and 2pie
+            if (this.rotation < 0) {
+                this.rotation += this.circle;
+            } else if (this.rotation > this.circle) {
+                this.rotation -= this.circle;
+            }
+
+            // clear the nodes and re-create them based on the new rotation
+            this.nodes.length = 0;
+            this.createCanvasNodes();
+
+            // redraw the tree with newly rotated nodes
+            this.drawTree();
+
+        }
+
+        private clear(): void {
+
+            // Store the current transformation matrix
+            this.context2d.save();
+
+            // Use the identity matrix while clearing the canvas
+            this.context2d.setTransform(1, 0, 0, 1, 0, 0);
+            this.context2d.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+            // Restore the transform
+            this.context2d.restore();
+        }
+
+        private mouseRotate(x: number, y: number): void {
+
+            if (x > this.xOrigin) {
+                // right
+                this.rotation += 0.01;
+            }
+            if (x < this.xOrigin) {
+                // left
+                this.rotation -= 0.01;
+            }
+
+            //// top right quadrant
+            //this.rotation += 0.1;
+            //// top left quadrant
+            //this.rotation -= 0.1;
+            //// bottom right quandrant
+            //this.rotation += 0.1;
+            //// bottom left quandrant
+            //this.rotation -= 0.1;
+            this.rotate();
+
+        }
+
+        private getNode(x: number, y: number): CanvasNode {
+
+            //1. get the radius via basic trig
+            var radius = Math.sqrt(Math.pow(x - this.xOrigin, 2) + Math.pow(y - this.yOrigin, 2));
+            //console.log(radius);
+
+            //2. get angle between origins x axis and mouse y value
+            var arctan = Math.atan2(y - this.yOrigin, x - this.xOrigin);
+            var radAngle = (y - this.yOrigin) < 0 ? this.circle + arctan : arctan;
+
+            //2. find the node from the array based on the 
+            return this.filterNodeByPosition(radAngle, radius);
+
+        }
+
+        private filterNodeByPosition(angle: number, radius: number): CanvasNode {
+
+            return this.nodes.filter((node: CanvasNode) => {
+
+                //TODO: clean this up
+                if (node.startRadian < node.endRadian) {
+                    return angle >= node.startRadian &&
+                        angle <= node.endRadian &&
+                        this.radius + (node.depth * this.radius) > radius &&
+                        this.radius + ((node.depth > 0 ? node.depth - 1 : - 1) * this.radius) < radius;
+                } else {
+                    return ((angle >= node.startRadian && angle < this.circle) || (angle <= node.endRadian && angle >= 0)) &&
+                        this.radius + (node.depth * this.radius) > radius &&
+                        this.radius + ((node.depth > 0 ? node.depth - 1 : - 1) * this.radius) < radius;
+                }
+            })[0];
+
+        }
+
+        private getNodeInfo(x: number, y: number): void {
+
+            if (x < 0 || y < 0) {
+                return;
+            }
+
+            var node = this.getNode(x, y);
+
+            if (node) {
+
+                this.tooltip.show();
+
+                this.tooltip.update(x + 100, y - 200, node.title, node.content);
+
+                if (this.debug) {
+
+                    $('#mousePosition').text("x: " + x + "  " + "y: " + y);
+                    $('#pixelColour').text(node.colour);
+                    $('#pixelPallette').css('background-color', node.colour);
+
+                    if (node) {
+
+                        $('#nodeInfo').text(
+                            "{ id: " + node.id + ", " +
+                            "parentId: " + node.parentId + ", " +
+                            "colour: " + node.colour + ", " +
+                            "depth: " + node.depth + ", " +
+                            "title: " + node.title + ", " +
+                            "content: " + node.content +
+                            "}");
+                    }
+                }
+
+            } else {
+                if (this.mouseRotation) {
+                    this.mouseRotate(x, y);
+                }
+                this.tooltip.hide();
+            }
+        }
+
+        private getRandomColour(): string {
+            var colour = 'rgba('
+            for (var i = 0; i < 3; i++) {
+                colour += Math.floor((Math.random() * 255)).toString() + ',';
+            }
+            colour += '255)';
+            return colour;
+        }
+
+        private sortByDepth(nodes: CanvasNode[]): CanvasNode[] {
+
+            return this.nodes.sort((a: CanvasNode, b: CanvasNode) => {
+
+                return a.depth - b.depth;
+            });
         }
 
         private createCanvasChildren(parentNode: CanvasNode): void {
@@ -307,7 +331,7 @@ module DMC.TreeBurst {
                 if (canvasNode.depth === 1) {
                     canvasNode.startRadian += this.rotation;
                     canvasNode.endRadian += this.rotation;
-                }                     
+                }
 
                 // cater for wrapping at all levels, so anything over a 2pies has 2pies taken away
                 // TODO: decide if this is needed or not

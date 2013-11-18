@@ -8,6 +8,7 @@ var DMC;
                 this.rotation = 0;
                 this.circle = Math.PI * 2;
                 this.rotationStep = Math.PI / 8;
+                this.mouseRotation = false;
                 this.$ = opts.$;
                 this.canvas = opts.canvas;
                 this.treeManager = opts.treeManager;
@@ -41,37 +42,27 @@ var DMC;
                 });
 
                 // setup the handler to detect the current pixel for tooltip
-                this.$(this.canvas).on('mousemove', function (e) {
-                    //this.mouseX = parseInt((e.clientX - this.canvasXOffset).toString(), 10);
-                    //this.mouseY = parseInt((e.clientY - this.canvasYOffset).toString(), 10);
-                    _this.mouseX = parseInt((e.clientX - _this.canvas.getBoundingClientRect().left).toString(), 10);
-                    _this.mouseY = parseInt((e.clientY - _this.canvas.getBoundingClientRect().top).toString(), 10);
+                this.$(this.canvas).off().on('mousemove', function (e) {
+                    _this.mouseX = parseInt((e.clientX - _this.canvasXOffset).toString(), 10);
+                    _this.mouseY = parseInt((e.clientY - _this.canvasYOffset).toString(), 10);
 
                     _this.getNodeInfo(_this.mouseX, _this.mouseY);
                 });
 
-                this.$('#rRight').on('click', function (e) {
+                this.$('#enableMouseRotate').on('click', function (e) {
+                    _this.mouseRotation = !_this.mouseRotation;
+                });
+
+                this.$('#rRight').off().on('click', function (e) {
                     _this.rotation -= _this.rotationStep;
                     _this.rotate();
                 });
 
-                this.$('#rLeft').on('click', function (e) {
+                this.$('#rLeft').off().on('click', function (e) {
                     _this.rotation += _this.rotationStep;
                     _this.rotate();
                 });
             }
-            TreeCanvas.prototype.clear = function () {
-                // Store the current transformation matrix
-                this.context2d.save();
-
-                // Use the identity matrix while clearing the canvas
-                this.context2d.setTransform(1, 0, 0, 1, 0, 0);
-                this.context2d.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-                // Restore the transform
-                this.context2d.restore();
-            };
-
             TreeCanvas.prototype.startThrottleTimer = function () {
                 this.mouseMoveInterval = window.setInterval(this.getNodeInfo(this.mouseX, this.mouseY), 500);
 
@@ -79,6 +70,41 @@ var DMC;
                     console.log("clearing time");
                     window.clearInterval(this.mouseMoveInterval);
                 }
+            };
+
+            TreeCanvas.prototype.drawTree = function () {
+                // sort the nodes by depth, we want to draw from the outside in as we overwrite portions of the outer circle with the inner
+                // circles until we reach the root
+                var sortedNodes = this.sortByDepth(this.nodes);
+
+                for (var i = sortedNodes.length - 1; i >= 0; i--) {
+                    var currentNode = sortedNodes[i];
+
+                    this.context2d.fillStyle = currentNode.colour;
+                    this.context2d.beginPath();
+                    this.context2d.moveTo(this.xOrigin, this.yOrigin);
+                    this.context2d.arc(this.xOrigin, this.yOrigin, currentNode.radius, currentNode.startRadian, currentNode.endRadian);
+                    this.context2d.fill();
+                    this.context2d.closePath();
+                }
+            };
+
+            TreeCanvas.prototype.createCanvasNodes = function () {
+                // get root
+                var root = this.treeManager.getRootNode();
+                var canvasNode = root;
+
+                if (!canvasNode.colour) {
+                    canvasNode.colour = this.getRandomColour();
+                }
+
+                // todo, work out radius from depth
+                canvasNode.radius = this.radius;
+                canvasNode.startRadian = 0;
+                canvasNode.endRadian = this.circle;
+
+                this.nodes.push(canvasNode);
+                this.createCanvasChildren(canvasNode);
             };
 
             TreeCanvas.prototype.rotate = function () {
@@ -97,6 +123,39 @@ var DMC;
 
                 // redraw the tree with newly rotated nodes
                 this.drawTree();
+            };
+
+            TreeCanvas.prototype.clear = function () {
+                // Store the current transformation matrix
+                this.context2d.save();
+
+                // Use the identity matrix while clearing the canvas
+                this.context2d.setTransform(1, 0, 0, 1, 0, 0);
+                this.context2d.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+                // Restore the transform
+                this.context2d.restore();
+            };
+
+            TreeCanvas.prototype.mouseRotate = function (x, y) {
+                if (x > this.xOrigin) {
+                    // right
+                    this.rotation += 0.01;
+                }
+                if (x < this.xOrigin) {
+                    // left
+                    this.rotation -= 0.01;
+                }
+
+                //// top right quadrant
+                //this.rotation += 0.1;
+                //// top left quadrant
+                //this.rotation -= 0.1;
+                //// bottom right quandrant
+                //this.rotation += 0.1;
+                //// bottom left quandrant
+                //this.rotation -= 0.1;
+                this.rotate();
             };
 
             TreeCanvas.prototype.getNode = function (x, y) {
@@ -145,6 +204,9 @@ var DMC;
                         }
                     }
                 } else {
+                    if (this.mouseRotation) {
+                        this.mouseRotate(x, y);
+                    }
                     this.tooltip.hide();
                 }
             };
@@ -158,45 +220,10 @@ var DMC;
                 return colour;
             };
 
-            TreeCanvas.prototype.drawTree = function () {
-                // sort the nodes by depth, we want to draw from the outside in as we overwrite portions of the outer circle with the inner
-                // circles until we reach the root
-                var sortedNodes = this.sortByDepth(this.nodes);
-
-                for (var i = sortedNodes.length - 1; i >= 0; i--) {
-                    var currentNode = sortedNodes[i];
-
-                    this.context2d.fillStyle = currentNode.colour;
-                    this.context2d.beginPath();
-                    this.context2d.moveTo(this.xOrigin, this.yOrigin);
-                    this.context2d.arc(this.xOrigin, this.yOrigin, currentNode.radius, currentNode.startRadian, currentNode.endRadian);
-                    this.context2d.fill();
-                    this.context2d.closePath();
-                }
-            };
-
             TreeCanvas.prototype.sortByDepth = function (nodes) {
                 return this.nodes.sort(function (a, b) {
                     return a.depth - b.depth;
                 });
-            };
-
-            TreeCanvas.prototype.createCanvasNodes = function () {
-                // get root
-                var root = this.treeManager.getRootNode();
-                var canvasNode = root;
-
-                if (!canvasNode.colour) {
-                    canvasNode.colour = this.getRandomColour();
-                }
-
-                // todo, work out radius from depth
-                canvasNode.radius = this.radius;
-                canvasNode.startRadian = 0;
-                canvasNode.endRadian = this.circle;
-
-                this.nodes.push(canvasNode);
-                this.createCanvasChildren(canvasNode);
             };
 
             TreeCanvas.prototype.createCanvasChildren = function (parentNode) {

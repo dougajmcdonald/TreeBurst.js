@@ -33,6 +33,20 @@ module DMC.TreeBurst {
 
         }
 
+        //private createRandomTree(numberOfNodes: number): Node[] {
+
+        //    var nodes = new Array<Node>();
+        //    var tiers = Math.floor(Math.random() * numberOfNodes / 10);
+
+        //    for (var i = 0; i < numberOfNodes % tiers; i++) {
+
+                
+
+        //    }
+
+
+        //}
+
         public getNodes(): Node[] {
             return this.nodes;
         }

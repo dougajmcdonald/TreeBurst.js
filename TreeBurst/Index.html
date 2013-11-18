@@ -27,6 +27,7 @@
     </select>
     <button id="rRight">Rotate anti-clockwise</button>
     <button id="rLeft">Rotate clockwise</button>
+    <button id="enableMouseRotate">Enable Mouse Rotation</button>
     <section id="debugControls">
         <h2>Position</h2>
         <div id="mousePosition"></div>
@@ -44,6 +45,9 @@
         $(document).ready(function () {            
 
             function init(nodeSet) {
+
+                this.demoNodes = null;
+                this.treeBurst = null;
 
                 this.demoNodes = new DMC.TreeBurst.Data.DemoNodes(nodeSet);
 

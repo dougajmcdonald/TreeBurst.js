@@ -21,6 +21,12 @@ var DMC;
                 this.parseChildren(this.root, depth);
             };
 
+            //private createRandomTree(numberOfNodes: number): Node[] {
+            //    var nodes = new Array<Node>();
+            //    var tiers = Math.floor(Math.random() * numberOfNodes / 10);
+            //    for (var i = 0; i < numberOfNodes % tiers; i++) {
+            //    }
+            //}
             TreeManager.prototype.getNodes = function () {
                 return this.nodes;
             };
