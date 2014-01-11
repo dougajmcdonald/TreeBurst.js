@@ -1,6 +1,11 @@
 /// <reference path="references.ts" />
 var TreeBurst;
 (function (TreeBurst) {
+    //jQuery plugin bits
+    function init($, opts) {
+        return new Application($, opts);
+    }
+
     (function (State) {
         State[State["Initialised"] = 0] = "Initialised";
         State[State["LoadingNodes"] = 1] = "LoadingNodes";
@@ -50,7 +55,7 @@ var TreeBurst;
 
         Application.prototype.setupPalettes = function () {
             this.paletteManager = new TreeBurst.PaletteManager({
-                //greyscalePalette: new Palettes.Greyscale({}),
+                greyscalePalette: new TreeBurst.Palettes.Greyscale({}),
                 randomPalette: new TreeBurst.Palettes.Random({})
             });
 

@@ -9,6 +9,7 @@
 /// <reference path="TreeBurst.ColourPalettes.ts" />
 /// <reference path="TreeBurst.Colour.ts" />
 /// <reference path="Palettes/TreeBurst.Palettes.Random.ts" />
+/// <reference path="Palettes/TreeBurst.Palettes.Greyscale.ts" />
 /// <reference path="../typings/jquery/jquery.d.ts" />
 
 

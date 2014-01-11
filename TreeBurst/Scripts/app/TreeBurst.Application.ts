@@ -2,9 +2,9 @@
 module TreeBurst {
 
     //jQuery plugin bits
-    //function init($: JQueryStatic, opts: TreeBurstOptions) {
-    //    return new Application($, opts);
-    //}
+    function init($: JQueryStatic, opts: TreeBurstOptions) {
+        return new Application($, opts);
+    }
 
     //// methods available through jQuery plugin
     //export function selectPalette(index: number) {
@@ -88,7 +88,7 @@ module TreeBurst {
         private setupPalettes(): void {
 
             this.paletteManager = new PaletteManager({
-                //greyscalePalette: new Palettes.Greyscale({}),
+                greyscalePalette: new Palettes.Greyscale({}),
                 randomPalette: new Palettes.Random({})               
             });
 

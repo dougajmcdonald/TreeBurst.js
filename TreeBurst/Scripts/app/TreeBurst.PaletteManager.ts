@@ -4,7 +4,7 @@ module TreeBurst {
     export interface PaletteManagerOptions {
         customPalette?: IColourPalette;
         pastelPalette?: IColourPalette;
-        greyscalePalette?: IColourPalette;
+        greyscalePalette: IColourPalette;
         randomPalette: IColourPalette;    
     }
 
