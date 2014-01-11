@@ -76,6 +76,8 @@
     <TypeScriptCompile Include="Scripts\app\TreeBurst.Tooltip.ts" />
     <TypeScriptCompile Include="Scripts\app\Palettes\TreeBurst.Palettes.Random.ts" />
     <TypeScriptCompile Include="Scripts\app\Palettes\TreeBurst.Palettes.Greyscale.ts" />
+    <Content Include="Scripts\app\jquery-treeburst.js" />
+    <Content Include="Scripts\app\jquery-treeburst.ts" />
     <Content Include="Scripts\app\Palettes\TreeBurst.Palettes.Greyscale.js" />
     <Content Include="Scripts\app\Palettes\TreeBurst.Palettes.Random.js" />
     <Content Include="Scripts\app\references.js" />
