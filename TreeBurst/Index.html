@@ -1,20 +1,26 @@
 ﻿<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>TreeBurst 0.1</title>    
+    <title>TreeBurst 0.1</title>
     <!-- Lib includes -->
-    <link href="Styles/css/CssReset.css" type="text/css" rel="stylesheet" />    
+    <link href="Styles/css/CssReset.css" type="text/css" rel="stylesheet" />
     <script src="Scripts/lib/modernizr-2.6.2.js"></script>
     <script src="Scripts/lib/jquery-2.0.3.js"></script>
     <!-- TreeBurst -->
     <link href="Styles/css/TreeBurst.min.css" type="text/css" rel="stylesheet" />
-    <script src="Scripts/app/DMC.TreeBurst.Application.js"></script>
-    <script src="Scripts/app/DMC.TreeBurst.TreeManager.js"></script>
-    <script src="Scripts/app/DMC.TreeBurst.Node.js"></script>
-    <script src="Scripts/app/DMC.TreeBurst.CanvasNode.js"></script>
-    <script src="Scripts/app/DMC.TreeBurst.TreeCanvas.js"></script>
-    <script src="Scripts/app/DMC.TreeBurst.Tooltip.js"></script>
-    <script src="Scripts/app/Data/DemoNodes.js"></script>    
+    <script src="Scripts/app/jquery-treeburst.js"></script>
+    <script src="Scripts/app/TreeBurst.Application.js"></script>
+    <script src="Scripts/app/TreeBurst.TreeManager.js"></script>
+    <script src="Scripts/app/TreeBurst.Node.js"></script>
+    <script src="Scripts/app/TreeBurst.CanvasNode.js"></script>
+    <script src="Scripts/app/TreeBurst.TreeCanvas.js"></script>
+    <script src="Scripts/app/TreeBurst.Tooltip.js"></script>
+    <script src="Scripts/app/TreeBurst.Colour.js"></script>
+    <script src="Scripts/app/TreeBurst.PaletteManager.js"></script>
+    <script src="Scripts/app/TreeBurst.ColourPalettes.js"></script>
+    <script src="Scripts/app/Palettes/TreeBurst.Palettes.Random.js"></script>
+    <script src="Scripts/app/Palettes/TreeBurst.Palettes.Greyscale.js"></script>
+    <script src="Scripts/app/Data/DemoNodes.js"></script>
 </head>
 <body>
     <h1>TreeBurst.js</h1>
@@ -24,6 +30,10 @@
         <option value="3">Depth 2 - Root with grandchildren, balanced</option>
         <option value="4">Depth 3 - Root with grandchildren, unbalanced</option>
         <option value="5">Depth 4 - Complex unbalanced tree</option>
+    </select>
+    <select id="paletteSelector">
+        <option value="0" selected="selected">Random Colours</option>
+        <option value="2">Greyscale</option>
     </select>
     <button id="rRight">Rotate anti-clockwise</button>
     <button id="rLeft">Rotate clockwise</button>
@@ -41,31 +51,64 @@
         <canvas id="tbCanvas" width="500" height="500"></canvas>
     </div>
 </body>
-    <script>
-        $(document).ready(function () {            
+<script>
 
-            function init(nodeSet) {
+    $(document).ready(function () {
+        
 
-                this.demoNodes = null;
-                this.treeBurst = null;
+        //$.TreeBurst.init($, {
+        //    nodes: new DMC.TreeBurst.Data.DemoNodes(nodeSet).getNodes(),
+        //    canvasElId: 'tbCanvas',
+        //    width: 800,
+        //    height: 600,
+        //    radius: 50,
+        //    debug: true
+        //});
 
-                this.demoNodes = new DMC.TreeBurst.Data.DemoNodes(nodeSet);
+        var treeBurst, demoNodes;
 
-                this.treeBurst = new DMC.TreeBurst.Application(jQuery, {
-                    nodes: this.demoNodes.getNodes(),
-                    canvasElId: 'tbCanvas',
-                    width: 800,
-                    height: 600,
-                    radius: 50,
-                    debug: true
-                });
-            }
+        function init() {
 
-            $('#treeDataSelector').on('change', function () {
-                init(parseInt(this.value, 10));
+            var nodeSet = parseInt($('#treeDataSelector').val(), 10);
+
+            demoNodes = new TreeBurst.Data.DemoNodes(nodeSet);
+
+            treeBurst = new TreeBurst.Application(jQuery, {
+                nodes: demoNodes.getNodes(),
+                canvasElId: 'tbCanvas',
+                width: 800,
+                height: 600,
+                radius: 50,
+                debug: true
             });
+        }
 
-            init(3);
+        $('#treeDataSelector').on('change', function () {
+            init(parseInt(this.value, 10));
         });
-    </script>
+
+        $('#paletteSelector').on('change', function () {
+
+            //treeBurst = new TreeBurst.Application(jQuery, {
+            //    nodes: demoNodes.getNodes(),
+            //    canvasElId: 'tbCanvas',
+            //    width: 800,
+            //    height: 600,
+            //    radius: 50,
+            //    debug: true
+            //});            
+
+            init();
+
+            treeBurst.SetPalette(parseInt(this.value, 10));
+
+            
+
+            
+
+        });
+
+        init();
+    });
+</script>
 </html>

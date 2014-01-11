@@ -1,10 +1,11 @@
 /// <reference path="references.ts" />
-module DMC.TreeBurst {
+module TreeBurst {
 
     export interface TreeCanvasOptions {
         $: JQueryStatic;
         canvas: HTMLCanvasElement;
         treeManager: TreeManager;
+        paletteManager: PaletteManager;
         radius: number;
         debug: boolean;
         rotation?: number;
@@ -15,6 +16,7 @@ module DMC.TreeBurst {
         private $: JQueryStatic;
         private canvas: HTMLCanvasElement;
         private treeManager: TreeManager;
+        private paletteManager: PaletteManager;  
         private context2d: CanvasRenderingContext2D;
         private width: number;
         private height: number;
@@ -46,6 +48,7 @@ module DMC.TreeBurst {
             this.$ = opts.$;
             this.canvas = <HTMLCanvasElement>opts.canvas;
             this.treeManager = opts.treeManager;
+            this.paletteManager = opts.paletteManager;
             this.context2d = this.canvas.getContext("2d");
             this.radius = opts.radius;
             this.debug = opts.debug;
@@ -102,17 +105,6 @@ module DMC.TreeBurst {
 
         }
 
-        public startThrottleTimer(): void {
-
-            this.mouseMoveInterval = window.setInterval(this.getNodeInfo(this.mouseX, this.mouseY), 500);
-
-            if (this.mouseX < 0 || this.mouseY < 0) {
-                console.log("clearing time");
-                window.clearInterval(this.mouseMoveInterval);
-            }
-
-        }
-
         public drawTree(): void {
 
             // sort the nodes by depth, we want to draw from the outside in as we overwrite portions of the outer circle with the inner
@@ -123,7 +115,7 @@ module DMC.TreeBurst {
 
                 var currentNode = sortedNodes[i];
 
-                this.context2d.fillStyle = currentNode.colour;
+                this.context2d.fillStyle = currentNode.colour.rgba;
                 this.context2d.beginPath();
                 this.context2d.moveTo(this.xOrigin, this.yOrigin);
                 this.context2d.arc(this.xOrigin, this.yOrigin, currentNode.radius, currentNode.startRadian, currentNode.endRadian);
@@ -140,7 +132,8 @@ module DMC.TreeBurst {
             var canvasNode = <CanvasNode>root;
 
             if (!canvasNode.colour) {
-                canvasNode.colour = this.getRandomColour();
+                canvasNode.colour = this.paletteManager.GetColour();
+                //this.getRandomColour();
             }
             // todo, work out radius from depth
             canvasNode.radius = this.radius;
@@ -212,7 +205,6 @@ module DMC.TreeBurst {
 
             //1. get the radius via basic trig
             var radius = Math.sqrt(Math.pow(x - this.xOrigin, 2) + Math.pow(y - this.yOrigin, 2));
-            //console.log(radius);
 
             //2. get angle between origins x axis and mouse y value
             var arctan = Math.atan2(y - this.yOrigin, x - this.xOrigin);
@@ -259,15 +251,15 @@ module DMC.TreeBurst {
                 if (this.debug) {
 
                     $('#mousePosition').text("x: " + x + "  " + "y: " + y);
-                    $('#pixelColour').text(node.colour);
-                    $('#pixelPallette').css('background-color', node.colour);
+                    $('#pixelColour').text(node.colour.rgba);
+                    $('#pixelPallette').css('background-color', node.colour.rgba);
 
                     if (node) {
 
                         $('#nodeInfo').text(
                             "{ id: " + node.id + ", " +
                             "parentId: " + node.parentId + ", " +
-                            "colour: " + node.colour + ", " +
+                            "colour: " + node.colour.rgba + ", " +
                             "depth: " + node.depth + ", " +
                             "title: " + node.title + ", " +
                             "content: " + node.content +
@@ -281,15 +273,6 @@ module DMC.TreeBurst {
                 }
                 this.tooltip.hide();
             }
-        }
-
-        private getRandomColour(): string {
-            var colour = 'rgba('
-            for (var i = 0; i < 3; i++) {
-                colour += Math.floor((Math.random() * 255)).toString() + ',';
-            }
-            colour += '255)';
-            return colour;
         }
 
         private sortByDepth(nodes: CanvasNode[]): CanvasNode[] {
@@ -320,7 +303,7 @@ module DMC.TreeBurst {
 
                 // only set a random colour if we haven't had one provided from our initial data
                 if (!canvasNode.colour) {
-                    canvasNode.colour = this.getRandomColour();
+                    canvasNode.colour = this.paletteManager.GetColour();
                 }
                 // set radius and start/end angles
                 canvasNode.radius = (canvasNode.depth + 1) * this.radius;

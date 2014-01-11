@@ -1,28 +1,16 @@
 /// <reference path="references.ts" />
-module DMC.TreeBurst {
-
-    export interface TreeManagerOptions {
-        $: JQueryStatic;
-        nodes: Node[];
-    }
-
-    export class TreeManager {
-
-        private $: JQueryStatic;
-        private root: Node;
-        private nodes: Node[];
-
-        constructor(opts: TreeManagerOptions) {
+var TreeBurst;
+(function (TreeBurst) {
+    var TreeManager = (function () {
+        function TreeManager(opts) {
             this.$ = opts.$;
             this.nodes = opts.nodes;
 
             // TODO: Construct a node tree from the nodes
             this.parseNodes();
         }
-
         // parse all nodes in the tree, setting their tier
-        private parseNodes() : void {
-
+        TreeManager.prototype.parseNodes = function () {
             // set the root
             var depth = 0;
             this.root = this.getRootNode();
@@ -30,78 +18,68 @@ module DMC.TreeBurst {
 
             // then recursively set tiers on all children
             this.parseChildren(this.root, depth);
-
-        }
+        };
 
         //private createRandomTree(numberOfNodes: number): Node[] {
-
         //    var nodes = new Array<Node>();
         //    var tiers = Math.floor(Math.random() * numberOfNodes / 10);
-
         //    for (var i = 0; i < numberOfNodes % tiers; i++) {
-
-                
-
         //    }
-
-
         //}
-
-        public getNodes(): Node[] {
+        TreeManager.prototype.getNodes = function () {
             return this.nodes;
-        }
+        };
 
-        public getRootNode(): Node {
+        TreeManager.prototype.getRootNode = function () {
+            var root;
 
-            var root: Node;
-            
-            $.each(this.nodes, (index: number, node: Node) => {
+            $.each(this.nodes, function (index, node) {
                 if (node.isRoot()) {
                     root = node;
                 }
             });
-            //TODO: capture duel roots
+
             if (!root) {
                 console.log("Error: No root node defined within nodes");
             }
 
             return root;
-        }
+        };
 
-        public parseChildren(node: Node, depth: number): void {
-
+        TreeManager.prototype.parseChildren = function (node, depth) {
             node.depth = depth;
 
             var kids = this.getChildren(node);
 
             if (kids.length > 0) {
-
                 depth++;
 
-                for (var i: number = 0; i < kids.length; i++) {                    
+                for (var i = 0; i < kids.length; i++) {
                     this.parseChildren(kids[i], depth);
                 }
             }
-        }
+        };
 
-        public getChildren(parentNode: Node): Node[] {
-            // todo: should we store children in a node? 
+        TreeManager.prototype.getChildren = function (parentNode) {
+            // todo: should we store children in a node?
             // seems heavy to go through them all each time we need a child
-            return this.nodes.filter((value: Node, index: number) => {
+            return this.nodes.filter(function (value, index) {
                 return value.parentId === parentNode.id;
             });
-        }
+        };
 
-        public printNodesToConsole(nodes: Node[]): void {
-            $.each(nodes, (index: number, node: Node) => {
-                console.log(node.toString());
-            });                        
-        }
-
-        public printTreeToConsole(): void {
-            $.each(this.nodes, (index: number, node: Node) => {
+        TreeManager.prototype.printNodesToConsole = function (nodes) {
+            $.each(nodes, function (index, node) {
                 console.log(node.toString());
             });
-        }
-    }
-}
+        };
+
+        TreeManager.prototype.printTreeToConsole = function () {
+            $.each(this.nodes, function (index, node) {
+                console.log(node.toString());
+            });
+        };
+        return TreeManager;
+    })();
+    TreeBurst.TreeManager = TreeManager;
+})(TreeBurst || (TreeBurst = {}));

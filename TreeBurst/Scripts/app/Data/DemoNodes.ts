@@ -1,5 +1,5 @@
 
-module DMC.TreeBurst.Data {
+module TreeBurst.Data {
     
     export class DemoNodes {
 

@@ -1,5 +1,5 @@
 /// <reference path="references.ts" />
-module DMC.TreeBurst {
+module TreeBurst {
 
     export interface NodeOptions {
 
@@ -10,7 +10,7 @@ module DMC.TreeBurst {
         // node internals
         title: string;
         content?: string;
-        colour?: string;        
+        colour?: Colour;        
     }
 
     export class Node {
@@ -21,7 +21,7 @@ module DMC.TreeBurst {
         public content: string = null;        
         public depth: number = null;
 
-        public colour: string = null;
+        public colour: Colour = null;
 
         constructor(opts: NodeOptions) {
 

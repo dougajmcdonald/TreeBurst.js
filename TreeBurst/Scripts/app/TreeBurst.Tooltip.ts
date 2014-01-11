@@ -1,5 +1,5 @@
 /// <reference path="references.ts" />
-module DMC.TreeBurst {
+module TreeBurst {
 
     export interface TooltipOptions {
         $: JQueryStatic;

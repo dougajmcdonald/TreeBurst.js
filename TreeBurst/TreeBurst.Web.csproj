@@ -61,25 +61,23 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Index.html" />
-    <TypeScriptCompile Include="Scripts\app\DMC.TreeBurst.Application.ts" />
+    <TypeScriptCompile Include="Scripts\app\TreeBurst.Application.ts" />
     <TypeScriptCompile Include="Scripts\app\references.ts" />
     <None Include="Scripts\lib\jquery-2.0.3.intellisense.js" />
-    <TypeScriptCompile Include="Scripts\app\DMC.TreeBurst.Node.ts" />
-    <TypeScriptCompile Include="Scripts\app\DMC.TreeBurst.TreeManager.ts" />
+    <TypeScriptCompile Include="Scripts\app\TreeBurst.Node.ts" />
+    <TypeScriptCompile Include="Scripts\app\TreeBurst.TreeManager.ts" />
     <TypeScriptCompile Include="Scripts\app\Data\DemoNodes.ts" />
-    <TypeScriptCompile Include="Scripts\app\DMC.TreeBurst.TreeCanvas.ts" />
-    <TypeScriptCompile Include="Scripts\app\DMC.TreeBurst.CanvasNode.ts" />
+    <TypeScriptCompile Include="Scripts\app\TreeBurst.TreeCanvas.ts" />
+    <TypeScriptCompile Include="Scripts\app\TreeBurst.CanvasNode.ts" />
     <Content Include="Scripts\app\Data\DemoNodes.js" />
-    <Content Include="Scripts\app\DMC.TreeBurst.Application.js" />
-    <Content Include="Scripts\app\DMC.TreeBurst.CanvasNode.js" />
-    <Content Include="Scripts\app\DMC.TreeBurst.Node.js" />
-    <TypeScriptCompile Include="Scripts\app\DMC.TreeBurst.Tooltip.ts" />
-    <Content Include="Scripts\app\DMC.TreeBurst.Tests.js" />
-    <Content Include="Scripts\app\DMC.TreeBurst.ToolTip.js" />
-    <Content Include="Scripts\app\DMC.TreeBurst.TreeCanvas.js" />
-    <Content Include="Scripts\app\DMC.TreeBurst.TreeManager.js" />
-    <Content Include="Scripts\app\references.js" />
-    <Content Include="Scripts\app\Tests\DMC.TreeBurst.Tests.js" />
+    <TypeScriptCompile Include="Scripts\app\TreeBurst.Colour.ts" />
+    <TypeScriptCompile Include="Scripts\app\TreeBurst.PaletteManager.ts" />
+    <TypeScriptCompile Include="Scripts\app\TreeBurst.ColourPalettes.ts" />
+    <TypeScriptCompile Include="Scripts\app\TreeBurst.Tooltip.ts" />
+    <TypeScriptCompile Include="Scripts\app\Palettes\TreeBurst.Palettes.Random.ts" />
+    <TypeScriptCompile Include="Scripts\app\Palettes\TreeBurst.Palettes.Greyscale.ts" />
+    <Content Include="Scripts\app\Tests\TreeBurst.Tests.js" />
+    <Content Include="Scripts\app\TreeBurst.Node.js" />
     <Content Include="Scripts\lib\css\qunit-1.12.0.css" />
     <Content Include="Scripts\lib\jquery-2.0.3.js" />
     <Content Include="Scripts\lib\jquery-2.0.3.min.js" />
@@ -91,7 +89,7 @@
     <Content Include="Styles\css\TreeBurst.min.css" />
     <Content Include="Tests.html" />
     <Content Include="Web.config" />
-    <TypeScriptCompile Include="Scripts\app\Tests\DMC.TreeBurst.Tests.ts" />
+    <TypeScriptCompile Include="Scripts\app\Tests\TreeBurst.Tests.ts" />
     <TypeScriptCompile Include="Scripts\typings\qunit\qunit.d.ts" />
   </ItemGroup>
   <ItemGroup>
